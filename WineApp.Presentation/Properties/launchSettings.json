@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WineApp.Presentation (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WineApp.Presentation (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
