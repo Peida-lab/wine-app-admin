@@ -14,7 +14,7 @@ public class Wine
     public WineType WineType { get; set; }
     public string? CustomWineType { get; set; }
     public string WineGrape { get; set; } = string.Empty;
-    public int WineYear { get; set; }
-    public decimal AlcoholPercentage { get; set; }
+    public required WineYear WineYear { get; set; }
+    public required WinePercentage AlcoholPercentage { get; set; }
     public string? RecommendedFood { get; set; }
 }
