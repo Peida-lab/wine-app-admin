@@ -63,4 +63,39 @@ public class WineService : IWineService
 
 
     }
+    public async Task<List<Wine>> GetAllWinesAsync()
+    {
+        return await _wineRepository.GetAllWinesAsync();
+    }
+
+    public async Task<Wine?> GetWineByIdAsync(Guid wineId)
+    {
+        return await _wineRepository.GetWineByIdAsync(wineId);
+    }
+
+    public async Task DeleteWineAsync(Guid wineId)
+    {
+        if (wineId == Guid.Empty)
+            throw new ArgumentException("Wine id is required.", nameof(wineId));
+
+        await _wineRepository.DeleteWineAsync(wineId);
+    }
+
+    public async Task UpdateWineAsync(Wine wine)
+    {
+        if (wine.WineId == Guid.Empty)
+            throw new ArgumentException("Wine id is required.");
+
+        if (wine.WineType == WineType.Other &&
+            string.IsNullOrWhiteSpace(wine.CustomWineType))
+            throw new ArgumentException(
+                "Custom wine type is required when type is Other.");
+
+        if (wine.WineType != WineType.Other)
+            wine.CustomWineType = null;
+        else
+            wine.CustomWineType = wine.CustomWineType!.Trim();
+
+        await _wineRepository.UpdateWineAsync(wine);
+    }
 }
