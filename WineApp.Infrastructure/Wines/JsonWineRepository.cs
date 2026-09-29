@@ -42,9 +42,27 @@ public class JsonWineRepository : IWineRepository
 
     }
 
-    public Task DeleteWineAsync(Guid wineId)
+    public async Task DeleteWineAsync(Guid wineId)
     {
-        throw new NotImplementedException();
+        if (!File.Exists(_filePath))
+            throw new InvalidOperationException("Wine file does not exist.");
+
+        string json = await File.ReadAllTextAsync(_filePath);
+
+        List<WineData> wines =
+            JsonSerializer.Deserialize<List<WineData>>(json) ?? [];
+
+        WineData? wineToDelete =
+            wines.FirstOrDefault(w => w.WineId == wineId);
+
+        if (wineToDelete == null)
+            throw new InvalidOperationException("Wine not found.");
+
+        wines.Remove(wineToDelete);
+
+        string updatedJson = JsonSerializer.Serialize(wines);
+
+        await File.WriteAllTextAsync(_filePath, updatedJson);
     }
 
     public async Task<List<Wine>> GetAllWinesAsync()
