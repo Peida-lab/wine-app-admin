@@ -10,4 +10,8 @@
     <PackageReference Include="microsoft.extensions.dependencyinjection" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WineApp.Domain\WineApp.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
