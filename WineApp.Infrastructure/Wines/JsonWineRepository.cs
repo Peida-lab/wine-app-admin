@@ -113,8 +113,36 @@ public class JsonWineRepository : IWineRepository
         return wine;
     }
 
-    public Task UpdateWineAsync(Wine wine)
+    public async Task UpdateWineAsync(Wine wine)
     {
-        throw new NotImplementedException();
+        if (!File.Exists(_filePath))
+            throw new InvalidOperationException("Wine file does not exist.");
+
+        string json = await File.ReadAllTextAsync(_filePath);
+
+        List<WineData> wines =
+            JsonSerializer.Deserialize<List<WineData>>(json) ?? [];
+
+        WineData? existingWine =
+            wines.FirstOrDefault(w => w.WineId == wine.WineId);
+
+        if (existingWine == null)
+            throw new InvalidOperationException("Wine not found.");
+
+        existingWine.WineName = wine.WineName.Value;
+        existingWine.WineDescription = wine.WineDescription.Value;
+        existingWine.WineProducer = wine.WineProducer.Value;
+        existingWine.WineCountry = wine.WineCountry.Value;
+        existingWine.WineRegion = wine.WineRegion;
+        existingWine.WineType = wine.WineType;
+        existingWine.CustomWineType = wine.CustomWineType;
+        existingWine.WineGrape = wine.WineGrape.Value;
+        existingWine.WineYear = wine.WineYear.Value;
+        existingWine.AlcoholPercentage = wine.AlcoholPercentage.Value;
+        existingWine.RecommendedFood = wine.RecommendedFood;
+
+        string updatedJson = JsonSerializer.Serialize(wines);
+
+        await File.WriteAllTextAsync(_filePath, updatedJson);
     }
 }
