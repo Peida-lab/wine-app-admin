@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using WineApp.Application.Wines.Interfaces;
 using WineApp.Domain.Wines.Models;
+using WineApp.Domain.Wines.ValueObjects;
 using WineApp.Infrastructure.Wines.Models;
 
 namespace WineApp.Infrastructure.Wines;
@@ -46,9 +47,38 @@ public class JsonWineRepository : IWineRepository
         throw new NotImplementedException();
     }
 
-    public Task<List<Wine>> GetAllWinesAsync()
+    public async Task<List<Wine>> GetAllWinesAsync()
     {
-        throw new NotImplementedException();
+        if (!File.Exists(_filePath))
+            return [];
+        string json = await File.ReadAllTextAsync(_filePath);
+
+        List<WineData> wineDataList =
+            JsonSerializer.Deserialize<List<WineData>>(json) ?? [];
+
+        List<Wine> wines = [];
+        foreach (WineData wineData in wineDataList)
+        {
+            Wine wine = new()
+            {
+                WineId = wineData.WineId,
+                WineName = new WineName(wineData.WineName),
+                WineDescription = new WineDescription(wineData.WineDescription),
+                WineProducer = new WineProducer(wineData.WineProducer),
+                WineCountry = new WineCountry(wineData.WineCountry),
+                WineRegion = wineData.WineRegion,
+                WineType = wineData.WineType,
+                CustomWineType = wineData.CustomWineType,
+                WineGrape = new WineGrape(wineData.WineGrape),
+                WineYear = new WineYear(wineData.WineYear),
+                AlcoholPercentage = new WinePercentage(wineData.AlcoholPercentage),
+                RecommendedFood = wineData.RecommendedFood
+
+            };
+
+            wines.Add(wine);
+        }
+        return wines;
     }
 
     public Task<Wine?> GetWineByIdAsync(Guid wineId)
