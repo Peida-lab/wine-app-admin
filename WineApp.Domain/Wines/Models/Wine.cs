@@ -7,7 +7,7 @@ public class Wine
 {
     public Guid WineId { get; set; }
     public required WineName WineName { get; set; }
-    public string WineDescription { get; set; } = string.Empty;
+    public required WineDescription WineDescription { get; set; }
     public required WineProducer WineProducer { get; set; }
     public required WineCountry WineCountry { get; set; }
     public string? WineRegion { get; set; }
