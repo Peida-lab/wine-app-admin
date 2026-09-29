@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WineApp.Domain\WineApp.Domain.csproj" />
-    <ProjectReference Include="..\WineApp.Infrastructure\WineApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
