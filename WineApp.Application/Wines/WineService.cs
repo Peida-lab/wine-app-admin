@@ -5,7 +5,7 @@ using WineApp.Domain.Wines.ValueObjects;
 
 namespace WineApp.Application.Wines;
 
-public class WineService
+public class WineService : IWineService
 {
     private readonly IWineRepository _wineRepository;
     public WineService(IWineRepository wineRepository)
