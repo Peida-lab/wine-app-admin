@@ -6,7 +6,7 @@ public record WineCountry
     public WineCountry(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Wine name is required.", nameof(value));
+            throw new ArgumentException("Wine country is required.", nameof(value));
         value = value.Trim();
         Value = value;
     }

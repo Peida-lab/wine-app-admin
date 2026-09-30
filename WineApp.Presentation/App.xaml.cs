@@ -6,7 +6,7 @@ using System;
 namespace WineApp.Presentation;
 
 
-public partial class App : Application
+public partial class App : Microsoft.UI.Xaml.Application
 {
     private readonly IServiceProvider _serviceProvider;
     private Window? _window;
