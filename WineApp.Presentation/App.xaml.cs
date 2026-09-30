@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
+using WineApp.Application;
+using WineApp.Infrastructure;
 
 
 namespace WineApp.Presentation;
@@ -17,6 +19,9 @@ public partial class App : Microsoft.UI.Xaml.Application
         InitializeComponent();
 
         ServiceCollection service = new();
+
+        service.AddApplication();
+        service.AddInfrastructure();
 
         service.AddSingleton<MainWindow>();
         _serviceProvider = service.BuildServiceProvider();
