@@ -13,4 +13,5 @@
     <Platform Solution="*|x86" Project="x86" />
     <Deploy />
   </Project>
+  <Project Path="WineApp.Test/WineApp.Test.csproj" Id="8479f764-a0a6-4274-a64c-5e053ff72d92" />
 </Solution>
