@@ -28,7 +28,6 @@
     <Folder Include="Application\Wines\Services\" />
     <Folder Include="Domain\Wines\Models\" />
     <Folder Include="Domain\Wines\Enums\" />
-    <Folder Include="Domain\Wines\ValueObjects\" />
     <Folder Include="Infrastructure\Wines\" />
   </ItemGroup>
 
