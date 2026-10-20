@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using WineApp.Application.Wines;
@@ -15,6 +16,11 @@ public partial class WinesPageViewModel(IWineService wineService)
     : ObservableObject
 {
     private List<Wine> _allWines = [];
+
+    private static readonly StringComparer SwedishComparer =
+        StringComparer.Create(
+            CultureInfo.GetCultureInfo("sv-SE"),
+            ignoreCase: true);
 
     public ObservableCollection<Wine> Wines { get; } = [];
 
@@ -34,6 +40,15 @@ public partial class WinesPageViewModel(IWineService wineService)
         "Alla viner",
         "Fine Wines",
         "Hus viner"
+    ];
+
+    // Available sorting options
+    public IReadOnlyList<string> SortOptions { get; } =
+    [
+        "Namn A–Ö",
+        "Namn Ö–A",
+        "Nyaste årgång först",
+        "Äldsta årgång först"
     ];
 
     private static readonly WineType?[] WineTypeValues =
@@ -57,6 +72,9 @@ public partial class WinesPageViewModel(IWineService wineService)
     public partial int SelectedFineWineIndex { get; set; }
 
     [ObservableProperty]
+    public partial int SelectedSortIndex { get; set; }
+
+    [ObservableProperty]
     public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
@@ -70,6 +88,7 @@ public partial class WinesPageViewModel(IWineService wineService)
         try
         {
             _allWines = await wineService.GetAllWinesAsync();
+
             FilterWines();
         }
         catch (Exception)
@@ -81,6 +100,7 @@ public partial class WinesPageViewModel(IWineService wineService)
             IsLoading = false;
         }
     }
+
     public async Task DeleteWineAsync(Guid wineId)
     {
         ErrorMessage = null;
@@ -89,7 +109,7 @@ public partial class WinesPageViewModel(IWineService wineService)
         {
             await wineService.DeleteWineAsync(wineId);
 
-            // Refresh the wine list after deletion
+            // Refresh the list after deletion
             await LoadWinesAsync();
         }
         catch (Exception)
@@ -113,6 +133,12 @@ public partial class WinesPageViewModel(IWineService wineService)
         FilterWines();
     }
 
+    // Update the list whenever sorting changes
+    partial void OnSelectedSortIndexChanged(int value)
+    {
+        FilterWines();
+    }
+
     private void FilterWines()
     {
         string search = SearchText.Trim();
@@ -123,7 +149,8 @@ public partial class WinesPageViewModel(IWineService wineService)
                 ? WineTypeValues[SelectedWineTypeIndex]
                 : null;
 
-        var filteredWines = _allWines.Where(wine =>
+        // First apply search and filters
+        IEnumerable<Wine> filteredWines = _allWines.Where(wine =>
         {
             bool matchesSearch =
                 string.IsNullOrEmpty(search) ||
@@ -154,9 +181,38 @@ public partial class WinesPageViewModel(IWineService wineService)
                    matchesFineWine;
         });
 
+        // Then sort the filtered results
+        IEnumerable<Wine> sortedWines = SelectedSortIndex switch
+        {
+            1 => filteredWines
+                .OrderByDescending(
+                    wine => wine.WineName.Value,
+                    SwedishComparer),
+
+            2 => filteredWines
+                .OrderByDescending(
+                    wine => wine.WineYear.Value)
+                .ThenBy(
+                    wine => wine.WineName.Value,
+                    SwedishComparer),
+
+            3 => filteredWines
+                .OrderBy(
+                    wine => wine.WineYear.Value)
+                .ThenBy(
+                    wine => wine.WineName.Value,
+                    SwedishComparer),
+
+            _ => filteredWines
+                .OrderBy(
+                    wine => wine.WineName.Value,
+                    SwedishComparer)
+        };
+
+        // Refresh the visible collection
         Wines.Clear();
 
-        foreach (var wine in filteredWines)
+        foreach (Wine wine in sortedWines)
         {
             Wines.Add(wine);
         }

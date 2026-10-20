@@ -29,11 +29,12 @@
 
         </StackPanel>
 
-        <!-- Sökning och filtrering -->
+        <!-- Sökning, filtrering och sortering -->
         <Grid Grid.Row="1" ColumnSpacing="12">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
@@ -61,6 +62,14 @@
                 HorizontalAlignment="Stretch"
                 ItemsSource="{x:Bind ViewModel.FineWineFilters}"
                 SelectedIndex="{x:Bind ViewModel.SelectedFineWineIndex, Mode=TwoWay}"/>
+
+            <!-- Sortering -->
+            <controls:NoWheelComboBox
+                Grid.Column="3"
+                Header="Sortera efter"
+                HorizontalAlignment="Stretch"
+                ItemsSource="{x:Bind ViewModel.SortOptions}"
+                SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}"/>
 
         </Grid>
 
@@ -205,7 +214,7 @@
                                 IsEnabled="False"
                                 VerticalAlignment="Center"/>
 
-                            <!-- Redigera vin -->
+                            <!-- Redigera -->
                             <Button
                                 Grid.Column="6"
                                 Content="Redigera"
@@ -213,7 +222,7 @@
                                 CommandParameter="{x:Bind WineId}"
                                 Click="EditWine_Click"/>
 
-                            <!-- Ta bort vin -->
+                            <!-- Ta bort -->
                             <Button
                                 Grid.Column="7"
                                 Content="Ta bort"
