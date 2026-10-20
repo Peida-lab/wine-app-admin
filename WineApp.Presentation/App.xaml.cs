@@ -29,7 +29,10 @@ public partial class App : Microsoft.UI.Xaml.Application
 
         // ViewModels
         services.AddTransient<HomePageViewModel>();
-        services.AddTransient<WinesPageViewModel>();
+
+        // Keep wine list state between navigations
+        services.AddSingleton<WinesPageViewModel>();
+
         services.AddTransient<WineEditorViewModel>();
         services.AddTransient<WineDetailsViewModel>();
 
