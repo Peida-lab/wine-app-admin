@@ -1,7 +1,8 @@
 <Page
     x:Class="WineApp.Presentation.Pages.WineEditorPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:WineApp.Presentation.Controls">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
 
@@ -82,7 +83,8 @@
                 FontSize="20"
                 FontWeight="SemiBold"/>
 
-            <ComboBox
+            <!-- Vintyp utan oavsiktlig scrolländring -->
+            <controls:NoWheelComboBox
                 Header="Vintyp"
                 HorizontalAlignment="Stretch"
                 ItemsSource="{x:Bind ViewModel.WineTypes}"
