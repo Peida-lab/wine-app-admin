@@ -29,6 +29,7 @@ public partial class App : Microsoft.UI.Xaml.Application
 
         // ViewModels
         services.AddTransient<HomePageViewModel>();
+        services.AddTransient<WinesPageViewModel>();
         services.AddTransient<WineEditorViewModel>();
 
         // Pages
