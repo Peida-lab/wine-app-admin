@@ -34,7 +34,7 @@ public sealed partial class WinesPage : Page
         await ViewModel.LoadWinesAsync();
     }
 
-    // Open the read-only details page
+    // Open wine details
     private void Wine_ItemClick(
         object sender,
         ItemClickEventArgs e)
@@ -47,7 +47,7 @@ public sealed partial class WinesPage : Page
             wine.WineId);
     }
 
-    // Navigate to the wine editor
+    // Open wine editor
     private void EditWine_Click(
         object sender,
         RoutedEventArgs e)
@@ -61,7 +61,7 @@ public sealed partial class WinesPage : Page
         }
     }
 
-    // Confirm before deleting a wine
+    // Confirm deletion
     private async void DeleteWine_Click(
         object sender,
         RoutedEventArgs e)
@@ -92,7 +92,7 @@ public sealed partial class WinesPage : Page
         }
     }
 
-    // Convert wine types to Swedish display names
+    // Swedish display names
     public static string GetWineTypeDisplay(
         WineType wineType,
         string? customWineType)
@@ -112,5 +112,14 @@ public sealed partial class WinesPage : Page
 
             _ => "Okänd vintyp"
         };
+    }
+
+    // Show the blue label only for Fine Wines
+    public static Visibility GetFineWineVisibility(
+        bool isFineWine)
+    {
+        return isFineWine
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 }

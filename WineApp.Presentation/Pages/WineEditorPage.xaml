@@ -147,7 +147,9 @@
                 FontWeight="SemiBold"/>
 
             <ToggleSwitch
-                Header="Fine Wine – säljs endast på flaska"
+                Header="Klassificering"
+                OnContent="Fine Wine"
+                OffContent="Husvin"
                 IsOn="{x:Bind ViewModel.IsFineWine, Mode=TwoWay}"/>
 
             <!-- Bild -->

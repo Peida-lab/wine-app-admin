@@ -40,7 +40,7 @@ public partial class WinesPageViewModel(IWineService wineService)
     [
         "Alla viner",
         "Fine Wines",
-        "Hus viner"
+        "Husviner"
     ];
 
     public IReadOnlyList<string> SortOptions { get; } =

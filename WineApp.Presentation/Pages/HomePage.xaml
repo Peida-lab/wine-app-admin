@@ -137,7 +137,7 @@
 
                 </Button>
 
-                <!-- Fine Wines -->
+                <!-- Fine wines -->
                 <Button
                     Grid.Column="3"
                     Click="FineWines_Click"
@@ -214,20 +214,16 @@
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                 BorderThickness="1"
                                 CornerRadius="10"
-                                Padding="16"
+                                Padding="14"
                                 Margin="0,4">
 
-                                <Grid ColumnSpacing="16">
+                                <!-- Image, flexible info, fixed actions -->
+                                <Grid ColumnSpacing="14">
 
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="78"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="94"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Wine image -->
@@ -246,100 +242,144 @@
 
                                     </Border>
 
-                                    <!-- Name and grape -->
-                                    <StackPanel
+                                    <!-- Flexible wine information -->
+                                    <Grid
                                         Grid.Column="1"
-                                        Spacing="4"
+                                        ColumnSpacing="14"
                                         VerticalAlignment="Center">
 
-                                        <TextBlock
-                                            Text="{x:Bind WineName.Value}"
-                                            FontSize="16"
-                                            FontWeight="SemiBold"
-                                            TextTrimming="CharacterEllipsis"/>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1.9*"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="0.9*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                        <TextBlock
-                                            Text="{x:Bind WineGrape.Value}"
-                                            FontSize="13"
-                                            Opacity="0.7"/>
+                                        <!-- Name and grape -->
+                                        <StackPanel
+                                            Grid.Column="0"
+                                            Spacing="5"
+                                            VerticalAlignment="Center">
 
-                                    </StackPanel>
+                                            <TextBlock
+                                                Text="{x:Bind WineName.Value}"
+                                                FontSize="17"
+                                                FontWeight="SemiBold"
+                                                TextWrapping="Wrap"/>
 
-                                    <!-- Producer -->
+                                            <TextBlock
+                                                Text="{x:Bind WineGrape.Value}"
+                                                FontSize="13"
+                                                Opacity="0.7"
+                                                TextWrapping="Wrap"/>
+
+                                            <!-- Fine Wine label -->
+                                            <Border
+                                                Visibility="{x:Bind pages:WinesPage.GetFineWineVisibility(IsFineWine), Mode=OneWay}"
+                                                HorizontalAlignment="Left"
+                                                Background="#DBEAFE"
+                                                BorderBrush="#93C5FD"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Padding="9,4"
+                                                Margin="0,3,0,0">
+
+                                                <TextBlock
+                                                    Text="Fine Wine"
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="#1D4ED8"/>
+
+                                            </Border>
+
+                                        </StackPanel>
+
+                                        <!-- Producer -->
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Spacing="6"
+                                            VerticalAlignment="Center">
+
+                                            <TextBlock
+                                                Text="Producent"
+                                                FontSize="12"
+                                                Opacity="0.6"
+                                                TextWrapping="Wrap"/>
+
+                                            <TextBlock
+                                                Text="{x:Bind WineProducer.Value}"
+                                                FontSize="14"
+                                                TextWrapping="Wrap"/>
+
+                                        </StackPanel>
+
+                                        <!-- Country -->
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            Spacing="6"
+                                            VerticalAlignment="Center">
+
+                                            <TextBlock
+                                                Text="Land"
+                                                FontSize="12"
+                                                Opacity="0.6"/>
+
+                                            <TextBlock
+                                                Text="{x:Bind WineCountry.Value}"
+                                                FontSize="14"
+                                                TextWrapping="Wrap"/>
+
+                                        </StackPanel>
+
+                                        <!-- Wine type -->
+                                        <StackPanel
+                                            Grid.Column="3"
+                                            Spacing="6"
+                                            VerticalAlignment="Center">
+
+                                            <TextBlock
+                                                Text="Vintyp"
+                                                FontSize="12"
+                                                Opacity="0.6"/>
+
+                                            <TextBlock
+                                                Text="{x:Bind pages:WinesPage.GetWineTypeDisplay(WineType, CustomWineType), Mode=OneWay}"
+                                                FontSize="14"
+                                                TextWrapping="Wrap"/>
+
+                                        </StackPanel>
+
+                                    </Grid>
+
+                                    <!-- Fixed right action column -->
                                     <StackPanel
                                         Grid.Column="2"
-                                        Spacing="4"
-                                        VerticalAlignment="Center">
-
-                                        <TextBlock
-                                            Text="Producent"
-                                            FontSize="12"
-                                            Opacity="0.6"/>
-
-                                        <TextBlock
-                                            Text="{x:Bind WineProducer.Value}"
-                                            TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                    <!-- Country -->
-                                    <StackPanel
-                                        Grid.Column="3"
-                                        Spacing="4"
-                                        VerticalAlignment="Center">
-
-                                        <TextBlock
-                                            Text="Land"
-                                            FontSize="12"
-                                            Opacity="0.6"/>
-
-                                        <TextBlock
-                                            Text="{x:Bind WineCountry.Value}"
-                                            TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                    <!-- Wine type -->
-                                    <StackPanel
-                                        Grid.Column="4"
-                                        Spacing="4"
-                                        VerticalAlignment="Center">
-
-                                        <TextBlock
-                                            Text="Vintyp"
-                                            FontSize="12"
-                                            Opacity="0.6"/>
-
-                                        <TextBlock
-                                            Text="{x:Bind pages:WinesPage.GetWineTypeDisplay(WineType, CustomWineType), Mode=OneWay}"
-                                            TextWrapping="Wrap"/>
-
-                                    </StackPanel>
-
-                                    <!-- Fine Wine -->
-                                    <CheckBox
-                                        Grid.Column="5"
-                                        Content="Fine Wine"
-                                        IsChecked="{x:Bind IsFineWine, Mode=OneWay}"
-                                        IsEnabled="False"
-                                        VerticalAlignment="Center"/>
-
-                                    <!-- Edit wine -->
-                                    <Button
-                                        Grid.Column="6"
-                                        Content="Redigera"
+                                        Spacing="8"
                                         VerticalAlignment="Center"
-                                        CommandParameter="{x:Bind WineId}"
-                                        Click="EditWine_Click"/>
+                                        HorizontalAlignment="Stretch">
 
-                                    <!-- Delete wine -->
-                                    <Button
-                                        Grid.Column="7"
-                                        Content="Ta bort"
-                                        Foreground="IndianRed"
-                                        VerticalAlignment="Center"
-                                        CommandParameter="{x:Bind WineId}"
-                                        Click="DeleteWine_Click"/>
+                                        <Button
+                                            Content="Redigera"
+                                            Height="32"
+                                            Padding="8,4"
+                                            FontSize="12"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            CommandParameter="{x:Bind WineId}"
+                                            Click="EditWine_Click"/>
+
+                                        <Button
+                                            Content="Ta bort"
+                                            Height="32"
+                                            Padding="8,4"
+                                            FontSize="12"
+                                            Foreground="IndianRed"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            CommandParameter="{x:Bind WineId}"
+                                            Click="DeleteWine_Click"/>
+
+                                    </StackPanel>
 
                                 </Grid>
 
