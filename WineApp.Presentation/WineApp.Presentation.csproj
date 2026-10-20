@@ -38,6 +38,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="communitytoolkit.mvvm" Version="8.4.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
@@ -46,6 +47,10 @@
     <ProjectReference Include="..\WineApp.Application\WineApp.Application.csproj" />
     <ProjectReference Include="..\WineApp.Domain\WineApp.Domain.csproj" />
     <ProjectReference Include="..\WineApp.Infrastructure\WineApp.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
   <!--
