@@ -63,6 +63,9 @@ public partial class WineEditorViewModel(
     [ObservableProperty]
     public partial bool IsEditMode { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsRemovingImage { get; set; }
+
     // Original image stored in the application
     [ObservableProperty]
     public partial string? CurrentImageReference { get; set; }
@@ -81,6 +84,13 @@ public partial class WineEditorViewModel(
     public string SaveButtonText =>
         IsEditMode ? "Spara ändringar" : "Spara vin";
 
+    // Enable removal only when a saved image exists
+    public bool CanRemoveSavedImage =>
+        IsEditMode &&
+        _editingWine is not null &&
+        !string.IsNullOrWhiteSpace(CurrentImageReference) &&
+        !IsRemovingImage;
+
     public IReadOnlyList<WineType> WineTypes { get; } =
         Enum.GetValues<WineType>();
 
@@ -88,6 +98,17 @@ public partial class WineEditorViewModel(
     {
         OnPropertyChanged(nameof(PageTitle));
         OnPropertyChanged(nameof(SaveButtonText));
+        OnPropertyChanged(nameof(CanRemoveSavedImage));
+    }
+
+    partial void OnCurrentImageReferenceChanged(string? value)
+    {
+        OnPropertyChanged(nameof(CanRemoveSavedImage));
+    }
+
+    partial void OnIsRemovingImageChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanRemoveSavedImage));
     }
 
     // Remember the newly selected image
@@ -111,7 +132,8 @@ public partial class WineEditorViewModel(
 
         try
         {
-            Wine? wine = await _wineService.GetWineByIdAsync(wineId.Value);
+            Wine? wine =
+                await _wineService.GetWineByIdAsync(wineId.Value);
 
             if (wine is null)
             {
@@ -130,12 +152,15 @@ public partial class WineEditorViewModel(
             CustomWineType = wine.CustomWineType ?? string.Empty;
             WineGrape = wine.WineGrape.Value;
             WineYear = wine.WineYear.Value.ToString();
-            AlcoholPercentage = wine.AlcoholPercentage.Value.ToString(
-                CultureInfo.GetCultureInfo("sv-SE"));
+
+            AlcoholPercentage =
+                wine.AlcoholPercentage.Value.ToString(
+                    CultureInfo.GetCultureInfo("sv-SE"));
+
             RecommendedFood = wine.RecommendedFood ?? string.Empty;
             IsFineWine = wine.IsFineWine;
 
-            // Display the existing saved image
+            // Display existing image
             CurrentImageReference = wine.ImageReference;
 
             SelectedImageName =
@@ -149,9 +174,47 @@ public partial class WineEditorViewModel(
         }
     }
 
+    // Remove the saved image without deleting the wine
+    public async Task RemoveWineImageAsync()
+    {
+        if (!CanRemoveSavedImage || _editingWine is null)
+            return;
+
+        IsRemovingImage = true;
+        StatusMessage = string.Empty;
+
+        try
+        {
+            await _wineService.RemoveWineImageAsync(
+                _editingWine.WineId);
+
+            // Keep the editor model synchronized
+            _editingWine.ImageReference = null;
+
+            // Clear the existing and pending image previews
+            CurrentImageReference = null;
+            SelectedImagePath = null;
+            SelectedImageName = "Ingen bild vald";
+
+            StatusMessage =
+                "Bilden har tagits bort. Övriga ändringar är inte sparade.";
+        }
+        catch (Exception)
+        {
+            StatusMessage = "Det gick inte att ta bort bilden.";
+        }
+        finally
+        {
+            IsRemovingImage = false;
+        }
+    }
+
     [RelayCommand]
     private async Task SaveWineAsync()
     {
+        if (IsRemovingImage)
+            return;
+
         StatusMessage = string.Empty;
 
         if (IsEditMode && _editingWine is null)
@@ -210,12 +273,14 @@ public partial class WineEditorViewModel(
 
                 // Validate values before updating
                 WineName validatedName = new(WineName);
-                WineDescription validatedDescription = new(WineDescription);
+                WineDescription validatedDescription =
+                    new(WineDescription);
                 WineProducer validatedProducer = new(WineProducer);
                 WineCountry validatedCountry = new(WineCountry);
                 WineGrape validatedGrape = new(WineGrape);
                 WineYear validatedYear = new(year);
-                WinePercentage validatedPercentage = new(percentage);
+                WinePercentage validatedPercentage =
+                    new(percentage);
 
                 Wine wine = _editingWine!;
 
@@ -232,13 +297,12 @@ public partial class WineEditorViewModel(
                 wine.RecommendedFood = RecommendedFood;
                 wine.IsFineWine = IsFineWine;
 
-                // Open the selected image, if any
+                // Open selected image, if any
                 using FileStream? imageStream =
                     SelectedImagePath is null
                         ? null
                         : File.OpenRead(SelectedImagePath);
 
-                // Let WineService handle image replacement and cleanup
                 await _wineService.UpdateWineAsync(
                     wine,
                     imageStream: imageStream,
@@ -283,7 +347,6 @@ public partial class WineEditorViewModel(
                     isFineWine: IsFineWine);
 
                 ResetForm();
-
                 StatusMessage = "Vinet har sparats!";
             }
         }

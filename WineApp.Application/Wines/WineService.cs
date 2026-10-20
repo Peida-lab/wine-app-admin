@@ -111,7 +111,6 @@ public class WineService : IWineService
         }
         catch
         {
-            // Remove uploaded image if wine registration fails
             if (!string.IsNullOrWhiteSpace(imageReference))
             {
                 await TryDeleteImageAsync(imageReference);
@@ -150,23 +149,7 @@ public class WineService : IWineService
         // Delete associated image after successful deletion
         if (!string.IsNullOrWhiteSpace(wine?.ImageReference))
         {
-            try
-            {
-                await _imageStorageService.DeleteImageAsync(
-                    wine.ImageReference);
-            }
-            catch (IOException)
-            {
-                // Wine was deleted; image cleanup can be retried later
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Do not report wine deletion as failed
-            }
-            catch (ArgumentException)
-            {
-                // Ignore invalid legacy image references
-            }
+            await TryDeleteImageAsync(wine.ImageReference);
         }
     }
 
@@ -259,6 +242,52 @@ public class WineService : IWineService
         {
             await TryDeleteImageAsync(oldImageReference);
         }
+    }
+
+    // Remove an image without deleting the wine
+    public async Task RemoveWineImageAsync(Guid wineId)
+    {
+        if (wineId == Guid.Empty)
+        {
+            throw new ArgumentException(
+                "Wine id is required.",
+                nameof(wineId));
+        }
+
+        // Retrieve the existing wine
+        Wine? wine =
+            await _wineRepository.GetWineByIdAsync(wineId);
+
+        if (wine is null)
+        {
+            throw new InvalidOperationException(
+                "Wine not found.");
+        }
+
+        // Nothing to remove
+        if (string.IsNullOrWhiteSpace(wine.ImageReference))
+            return;
+
+        // Remember the old image
+        string oldImageReference = wine.ImageReference;
+
+        // Remove reference from wine
+        wine.ImageReference = null;
+
+        try
+        {
+            // Update JSON before deleting the image file
+            await _wineRepository.UpdateWineAsync(wine);
+        }
+        catch
+        {
+            // Restore reference if repository update fails
+            wine.ImageReference = oldImageReference;
+            throw;
+        }
+
+        // Delete image after successful repository update
+        await TryDeleteImageAsync(oldImageReference);
     }
 
     // Best-effort cleanup of stored image files

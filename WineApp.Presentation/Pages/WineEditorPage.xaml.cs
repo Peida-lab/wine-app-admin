@@ -34,6 +34,7 @@ public sealed partial class WineEditorPage : Page
         await ViewModel.LoadWineAsync(WineId);
     }
 
+    // Select a new image
     private async void ChooseImage_Click(
         object sender,
         RoutedEventArgs e)
@@ -55,13 +56,41 @@ public sealed partial class WineEditorPage : Page
             if (file is null)
                 return;
 
-            // Send the selected image to the ViewModel
             ViewModel.SetSelectedImage(file.Path);
         }
         catch (Exception)
         {
             ViewModel.StatusMessage =
                 "Det gick inte att välja bilden.";
+        }
+    }
+
+    // Confirm before removing a saved image
+    private async void RemoveImage_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (!ViewModel.CanRemoveSavedImage)
+            return;
+
+        ContentDialog dialog = new()
+        {
+            XamlRoot = this.XamlRoot,
+            Title = "Ta bort bild?",
+            Content =
+                "Är du säker på att du vill ta bort bilden från vinet? " +
+                "Bilden tas bort direkt och åtgärden kan inte ångras. " +
+                "En eventuell nyvald bild rensas också.",
+            PrimaryButtonText = "Ta bort bild",
+            CloseButtonText = "Avbryt",
+            DefaultButton = ContentDialogButton.Close
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            await ViewModel.RemoveWineImageAsync();
         }
     }
 }
