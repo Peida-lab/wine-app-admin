@@ -98,9 +98,10 @@
                         Padding="16"
                         Margin="0,4">
 
-                        <Grid ColumnSpacing="20">
+                        <Grid ColumnSpacing="16">
 
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -110,10 +111,27 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
+                            <!-- Vinbild -->
+                            <Border
+                                Grid.Column="0"
+                                Width="78"
+                                Height="94"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="4"
+                                VerticalAlignment="Center">
+
+                                <controls:WineImage
+                                    ImageReference="{x:Bind ImageReference, Mode=OneWay}"/>
+
+                            </Border>
+
                             <!-- Namn och druva -->
                             <StackPanel
-                                Grid.Column="0"
-                                Spacing="4">
+                                Grid.Column="1"
+                                Spacing="4"
+                                VerticalAlignment="Center">
 
                                 <TextBlock
                                     Text="{x:Bind WineName.Value}"
@@ -130,8 +148,9 @@
 
                             <!-- Producent -->
                             <StackPanel
-                                Grid.Column="1"
-                                Spacing="4">
+                                Grid.Column="2"
+                                Spacing="4"
+                                VerticalAlignment="Center">
 
                                 <TextBlock
                                     Text="Producent"
@@ -146,8 +165,9 @@
 
                             <!-- Land -->
                             <StackPanel
-                                Grid.Column="2"
-                                Spacing="4">
+                                Grid.Column="3"
+                                Spacing="4"
+                                VerticalAlignment="Center">
 
                                 <TextBlock
                                     Text="Land"
@@ -162,8 +182,9 @@
 
                             <!-- Vintyp -->
                             <StackPanel
-                                Grid.Column="3"
-                                Spacing="4">
+                                Grid.Column="4"
+                                Spacing="4"
+                                VerticalAlignment="Center">
 
                                 <TextBlock
                                     Text="Vintyp"
@@ -178,7 +199,7 @@
 
                             <!-- Fine Wine -->
                             <CheckBox
-                                Grid.Column="4"
+                                Grid.Column="5"
                                 Content="Fine Wine"
                                 IsChecked="{x:Bind IsFineWine, Mode=OneWay}"
                                 IsEnabled="False"
@@ -186,7 +207,7 @@
 
                             <!-- Redigera vin -->
                             <Button
-                                Grid.Column="5"
+                                Grid.Column="6"
                                 Content="Redigera"
                                 VerticalAlignment="Center"
                                 CommandParameter="{x:Bind WineId}"
@@ -194,7 +215,7 @@
 
                             <!-- Ta bort vin -->
                             <Button
-                                Grid.Column="6"
+                                Grid.Column="7"
                                 Content="Ta bort"
                                 Foreground="IndianRed"
                                 VerticalAlignment="Center"

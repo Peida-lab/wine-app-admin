@@ -23,7 +23,6 @@ public partial class WineEditorViewModel(
     private readonly IImageStorageService _imageStorageService = imageStorageService;
 
     private Wine? _editingWine;
-    private string? _selectedImagePath;
 
     [ObservableProperty]
     public partial string WineName { get; set; } = string.Empty;
@@ -67,6 +66,14 @@ public partial class WineEditorViewModel(
     [ObservableProperty]
     public partial bool IsEditMode { get; set; }
 
+    // Original image stored in the application
+    [ObservableProperty]
+    public partial string? CurrentImageReference { get; set; }
+
+    // Newly selected image, before saving
+    [ObservableProperty]
+    public partial string? SelectedImagePath { get; set; }
+
     [ObservableProperty]
     public partial string SelectedImageName { get; set; } =
         "Ingen bild vald";
@@ -86,12 +93,12 @@ public partial class WineEditorViewModel(
         OnPropertyChanged(nameof(SaveButtonText));
     }
 
-    // Remember the selected image until the wine is saved
+    // Remember the newly selected image
     public void SetSelectedImage(string filePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        _selectedImagePath = filePath;
+        SelectedImagePath = filePath;
         SelectedImageName = Path.GetFileName(filePath);
     }
 
@@ -130,6 +137,9 @@ public partial class WineEditorViewModel(
                 CultureInfo.GetCultureInfo("sv-SE"));
             RecommendedFood = wine.RecommendedFood ?? string.Empty;
             IsFineWine = wine.IsFineWine;
+
+            // Display the existing saved image
+            CurrentImageReference = wine.ImageReference;
 
             SelectedImageName =
                 string.IsNullOrWhiteSpace(wine.ImageReference)
@@ -201,6 +211,7 @@ public partial class WineEditorViewModel(
                         "Ange en annan vintyp.");
                 }
 
+                // Validate values before updating
                 WineName validatedName = new(WineName);
                 WineDescription validatedDescription = new(WineDescription);
                 WineProducer validatedProducer = new(WineProducer);
@@ -224,23 +235,23 @@ public partial class WineEditorViewModel(
                 wine.RecommendedFood = RecommendedFood;
                 wine.IsFineWine = IsFineWine;
 
-                // Save a replacement image only if one was selected
-                if (_selectedImagePath is not null)
+                // Save replacement image, if selected
+                if (SelectedImagePath is not null)
                 {
                     using FileStream imageStream =
-                        File.OpenRead(_selectedImagePath);
+                        File.OpenRead(SelectedImagePath);
 
-                    string imageReference =
+                    wine.ImageReference =
                         await _imageStorageService.SaveImageAsync(
                             imageStream,
-                            Path.GetFileName(_selectedImagePath));
-
-                    wine.ImageReference = imageReference;
+                            Path.GetFileName(SelectedImagePath));
                 }
 
                 await _wineService.UpdateWineAsync(wine);
 
-                _selectedImagePath = null;
+                // Switch preview to the saved image
+                CurrentImageReference = wine.ImageReference;
+                SelectedImagePath = null;
 
                 SelectedImageName =
                     string.IsNullOrWhiteSpace(wine.ImageReference)
@@ -251,13 +262,11 @@ public partial class WineEditorViewModel(
             }
             else
             {
-                // Open the selected image as a stream
                 using FileStream? imageStream =
-                    _selectedImagePath is null
+                    SelectedImagePath is null
                         ? null
-                        : File.OpenRead(_selectedImagePath);
+                        : File.OpenRead(SelectedImagePath);
 
-                // WineService handles image storage
                 await _wineService.AddWineAsync(
                     wineName: WineName,
                     wineDescription: WineDescription,
@@ -271,9 +280,9 @@ public partial class WineEditorViewModel(
                     alcoholPercentage: percentage,
                     recommendedFood: RecommendedFood,
                     imageStream: imageStream,
-                    imageFileName: _selectedImagePath is null
+                    imageFileName: SelectedImagePath is null
                         ? null
-                        : Path.GetFileName(_selectedImagePath),
+                        : Path.GetFileName(SelectedImagePath),
                     isFineWine: IsFineWine);
 
                 ResetForm();
@@ -317,7 +326,8 @@ public partial class WineEditorViewModel(
         RecommendedFood = string.Empty;
         IsFineWine = false;
 
-        _selectedImagePath = null;
+        CurrentImageReference = null;
+        SelectedImagePath = null;
         SelectedImageName = "Ingen bild vald";
     }
 }

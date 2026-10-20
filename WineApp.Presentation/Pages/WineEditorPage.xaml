@@ -141,16 +141,35 @@
                 FontSize="20"
                 FontWeight="SemiBold"/>
 
-            <StackPanel Spacing="10">
+            <StackPanel Spacing="12">
 
+                <!-- Image preview -->
+                <Border
+                    Width="170"
+                    Height="200"
+                    Padding="8"
+                    HorizontalAlignment="Left"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+
+                    <controls:WineImage
+                        ImageReference="{x:Bind ViewModel.CurrentImageReference, Mode=OneWay}"
+                        SelectedImagePath="{x:Bind ViewModel.SelectedImagePath, Mode=OneWay}"/>
+
+                </Border>
+
+                <!-- Choose image -->
                 <Button
                     Content="Välj bild"
                     HorizontalAlignment="Left"
                     Click="ChooseImage_Click"/>
 
+                <!-- Filename / image status -->
                 <TextBlock
                     Text="{x:Bind ViewModel.SelectedImageName, Mode=OneWay}"
-                    Opacity="0.7"/>
+                    Opacity="0.7"
+                    TextWrapping="Wrap"/>
 
             </StackPanel>
 
