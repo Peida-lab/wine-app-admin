@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,7 +43,6 @@ public partial class WinesPageViewModel(IWineService wineService)
         "Hus viner"
     ];
 
-    // Available sorting options
     public IReadOnlyList<string> SortOptions { get; } =
     [
         "Namn A–Ö",
@@ -80,6 +80,15 @@ public partial class WinesPageViewModel(IWineService wineService)
     [ObservableProperty]
     public partial string? ErrorMessage { get; set; }
 
+    // Shows how many wines match the filters
+    [ObservableProperty]
+    public partial string ResultSummary { get; set; } = string.Empty;
+
+    // Shows a message when the list is empty
+    [ObservableProperty]
+    public partial string EmptyStateMessage { get; set; } =
+        string.Empty;
+
     public async Task LoadWinesAsync()
     {
         IsLoading = true;
@@ -94,6 +103,11 @@ public partial class WinesPageViewModel(IWineService wineService)
         catch (Exception)
         {
             ErrorMessage = "Det gick inte att hämta vinerna.";
+
+            _allWines = [];
+            Wines.Clear();
+            ResultSummary = string.Empty;
+            EmptyStateMessage = string.Empty;
         }
         finally
         {
@@ -118,6 +132,18 @@ public partial class WinesPageViewModel(IWineService wineService)
         }
     }
 
+    // Reset search, filters and sorting
+    [RelayCommand]
+    private void ResetFilters()
+    {
+        SearchText = string.Empty;
+        SelectedWineTypeIndex = 0;
+        SelectedFineWineIndex = 0;
+        SelectedSortIndex = 0;
+
+        FilterWines();
+    }
+
     partial void OnSearchTextChanged(string value)
     {
         FilterWines();
@@ -133,7 +159,6 @@ public partial class WinesPageViewModel(IWineService wineService)
         FilterWines();
     }
 
-    // Update the list whenever sorting changes
     partial void OnSelectedSortIndexChanged(int value)
     {
         FilterWines();
@@ -141,7 +166,7 @@ public partial class WinesPageViewModel(IWineService wineService)
 
     private void FilterWines()
     {
-        string search = SearchText.Trim();
+        string search = (SearchText ?? string.Empty).Trim();
 
         WineType? selectedType =
             SelectedWineTypeIndex >= 0 &&
@@ -149,7 +174,7 @@ public partial class WinesPageViewModel(IWineService wineService)
                 ? WineTypeValues[SelectedWineTypeIndex]
                 : null;
 
-        // First apply search and filters
+        // Apply search and filters
         IEnumerable<Wine> filteredWines = _allWines.Where(wine =>
         {
             bool matchesSearch =
@@ -181,7 +206,7 @@ public partial class WinesPageViewModel(IWineService wineService)
                    matchesFineWine;
         });
 
-        // Then sort the filtered results
+        // Apply sorting
         IEnumerable<Wine> sortedWines = SelectedSortIndex switch
         {
             1 => filteredWines
@@ -209,12 +234,32 @@ public partial class WinesPageViewModel(IWineService wineService)
                     SwedishComparer)
         };
 
-        // Refresh the visible collection
+        // Refresh the visible wines
         Wines.Clear();
 
         foreach (Wine wine in sortedWines)
         {
             Wines.Add(wine);
+        }
+
+        // Update result counter
+        ResultSummary =
+            $"Visar {Wines.Count} av {_allWines.Count} viner";
+
+        // Show an appropriate message if no wines match
+        if (Wines.Count > 0)
+        {
+            EmptyStateMessage = string.Empty;
+        }
+        else if (_allWines.Count == 0)
+        {
+            EmptyStateMessage =
+                "Inga viner har registrerats ännu.";
+        }
+        else
+        {
+            EmptyStateMessage =
+                "Inga viner matchar din sökning eller dina filter.";
         }
     }
 }

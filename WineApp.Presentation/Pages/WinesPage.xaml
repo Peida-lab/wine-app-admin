@@ -12,10 +12,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Rubrik -->
+        <!-- Page heading -->
         <StackPanel Grid.Row="0" Spacing="6">
 
             <TextBlock
@@ -29,7 +30,7 @@
 
         </StackPanel>
 
-        <!-- Sökning, filtrering och sortering -->
+        <!-- Search and filters -->
         <Grid Grid.Row="1" ColumnSpacing="12">
 
             <Grid.ColumnDefinitions>
@@ -39,7 +40,6 @@
                 <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Sökfält -->
             <TextBox
                 Grid.Column="0"
                 Header="Sök vin"
@@ -47,7 +47,6 @@
                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 HorizontalAlignment="Stretch"/>
 
-            <!-- Filter: Vintyp -->
             <controls:NoWheelComboBox
                 Grid.Column="1"
                 Header="Vintyp"
@@ -55,7 +54,6 @@
                 ItemsSource="{x:Bind ViewModel.WineTypeFilters}"
                 SelectedIndex="{x:Bind ViewModel.SelectedWineTypeIndex, Mode=TwoWay}"/>
 
-            <!-- Filter: Fine Wine -->
             <controls:NoWheelComboBox
                 Grid.Column="2"
                 Header="Fine Wine"
@@ -63,7 +61,6 @@
                 ItemsSource="{x:Bind ViewModel.FineWineFilters}"
                 SelectedIndex="{x:Bind ViewModel.SelectedFineWineIndex, Mode=TwoWay}"/>
 
-            <!-- Sortering -->
             <controls:NoWheelComboBox
                 Grid.Column="3"
                 Header="Sortera efter"
@@ -73,7 +70,7 @@
 
         </Grid>
 
-        <!-- Laddning och felmeddelanden -->
+        <!-- Loading and error messages -->
         <StackPanel Grid.Row="2" Spacing="8">
 
             <ProgressRing
@@ -89,9 +86,41 @@
 
         </StackPanel>
 
-        <!-- Vinlista -->
+        <!-- Results and reset button -->
+        <Grid Grid.Row="3" ColumnSpacing="12">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Column="0"
+                Spacing="6"
+                VerticalAlignment="Center">
+
+                <TextBlock
+                    Text="{x:Bind ViewModel.ResultSummary, Mode=OneWay}"
+                    Opacity="0.7"/>
+
+                <TextBlock
+                    Text="{x:Bind ViewModel.EmptyStateMessage, Mode=OneWay}"
+                    FontWeight="SemiBold"
+                    TextWrapping="Wrap"/>
+
+            </StackPanel>
+
+            <Button
+                Grid.Column="1"
+                Content="Rensa filter"
+                Command="{x:Bind ViewModel.ResetFiltersCommand}"
+                VerticalAlignment="Center"/>
+
+        </Grid>
+
+        <!-- Wine list -->
         <ListView
-            Grid.Row="3"
+            Grid.Row="4"
             ItemsSource="{x:Bind ViewModel.Wines, Mode=OneWay}"
             SelectionMode="None">
 
@@ -120,7 +149,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Vinbild -->
+                            <!-- Wine image -->
                             <Border
                                 Grid.Column="0"
                                 Width="78"
@@ -136,7 +165,7 @@
 
                             </Border>
 
-                            <!-- Namn och druva -->
+                            <!-- Name and grape -->
                             <StackPanel
                                 Grid.Column="1"
                                 Spacing="4"
@@ -155,7 +184,7 @@
 
                             </StackPanel>
 
-                            <!-- Producent -->
+                            <!-- Producer -->
                             <StackPanel
                                 Grid.Column="2"
                                 Spacing="4"
@@ -172,7 +201,7 @@
 
                             </StackPanel>
 
-                            <!-- Land -->
+                            <!-- Country -->
                             <StackPanel
                                 Grid.Column="3"
                                 Spacing="4"
@@ -189,7 +218,7 @@
 
                             </StackPanel>
 
-                            <!-- Vintyp -->
+                            <!-- Wine type -->
                             <StackPanel
                                 Grid.Column="4"
                                 Spacing="4"
@@ -214,7 +243,7 @@
                                 IsEnabled="False"
                                 VerticalAlignment="Center"/>
 
-                            <!-- Redigera -->
+                            <!-- Edit wine -->
                             <Button
                                 Grid.Column="6"
                                 Content="Redigera"
@@ -222,7 +251,7 @@
                                 CommandParameter="{x:Bind WineId}"
                                 Click="EditWine_Click"/>
 
-                            <!-- Ta bort -->
+                            <!-- Delete wine -->
                             <Button
                                 Grid.Column="7"
                                 Content="Ta bort"
