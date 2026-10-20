@@ -104,7 +104,21 @@ public class WineService : IWineService
             ImageReference = imageReference
         };
 
-        await _wineRepository.AddWineAsync(wine);
+        // Save wine and clean up image if saving fails
+        try
+        {
+            await _wineRepository.AddWineAsync(wine);
+        }
+        catch
+        {
+            // Remove uploaded image if wine registration fails
+            if (!string.IsNullOrWhiteSpace(imageReference))
+            {
+                await TryDeleteImageAsync(imageReference);
+            }
+
+            throw;
+        }
     }
 
     public async Task<List<Wine>> GetAllWinesAsync()
@@ -147,7 +161,7 @@ public class WineService : IWineService
             }
             catch (UnauthorizedAccessException)
             {
-                // Do not report the wine deletion as failed
+                // Do not report wine deletion as failed
             }
             catch (ArgumentException)
             {
@@ -155,7 +169,6 @@ public class WineService : IWineService
             }
         }
     }
-
 
     public async Task UpdateWineAsync(
         Wine wine,
@@ -165,7 +178,10 @@ public class WineService : IWineService
         ArgumentNullException.ThrowIfNull(wine);
 
         if (wine.WineId == Guid.Empty)
-            throw new ArgumentException("Wine id is required.");
+        {
+            throw new ArgumentException(
+                "Wine id is required.");
+        }
 
         if (wine.WineType == WineType.Other &&
             string.IsNullOrWhiteSpace(wine.CustomWineType))
@@ -193,14 +209,18 @@ public class WineService : IWineService
                 "Image stream is required.");
         }
 
-        // Get the previously saved image reference
+        // Get previously saved wine
         Wine? existingWine =
             await _wineRepository.GetWineByIdAsync(wine.WineId);
 
         if (existingWine is null)
-            throw new InvalidOperationException("Wine not found.");
+        {
+            throw new InvalidOperationException(
+                "Wine not found.");
+        }
 
-        string? oldImageReference = existingWine.ImageReference;
+        string? oldImageReference =
+            existingWine.ImageReference;
 
         // No new image: update wine information only
         if (imageStream is null)
@@ -209,7 +229,7 @@ public class WineService : IWineService
             return;
         }
 
-        // Save the replacement image
+        // Save replacement image
         string newImageReference =
             await _imageStorageService.SaveImageAsync(
                 imageStream,
@@ -219,21 +239,21 @@ public class WineService : IWineService
 
         try
         {
-            // Update JSON before deleting the old image
+            // Update JSON before deleting old image
             await _wineRepository.UpdateWineAsync(wine);
         }
         catch
         {
-            // Restore the previous reference
+            // Restore previous image reference
             wine.ImageReference = oldImageReference;
 
-            // Remove newly uploaded image if updating fails
+            // Remove newly uploaded image
             await TryDeleteImageAsync(newImageReference);
 
             throw;
         }
 
-        // Delete old image only after successful update
+        // Delete old image after successful update
         if (!string.IsNullOrWhiteSpace(oldImageReference) &&
             oldImageReference != newImageReference)
         {
@@ -246,7 +266,8 @@ public class WineService : IWineService
     {
         try
         {
-            await _imageStorageService.DeleteImageAsync(imageReference);
+            await _imageStorageService.DeleteImageAsync(
+                imageReference);
         }
         catch (IOException)
         {
@@ -254,12 +275,11 @@ public class WineService : IWineService
         }
         catch (UnauthorizedAccessException)
         {
-            // Keep the successfully saved wine update
+            // Keep the original operation's result
         }
         catch (ArgumentException)
         {
             // Ignore invalid legacy image references
         }
     }
-
 }

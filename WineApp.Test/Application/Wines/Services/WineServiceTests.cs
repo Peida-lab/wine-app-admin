@@ -154,6 +154,36 @@ public class WineServiceTests
         Assert.Equal(1, _imageStorage.SaveCallCount);
     }
 
+    // New test: clean up uploaded image when repository fails
+    [Fact]
+    public async Task AddWineAsync_WhenRepositoryFails_DeletesUploadedImage()
+    {
+        // Arrange
+        using MemoryStream imageStream = new([1, 2, 3, 4]);
+
+        _imageStorage.ReferenceToReturn = "new-image.jpg";
+        _repository.ShouldFailOnAdd = true;
+
+        // Act
+        Func<Task> action = () =>
+            AddValidWineAsync(
+                imageStream: imageStream,
+                imageFileName: "wine.jpg");
+
+        // Assert
+        await Assert.ThrowsAsync<IOException>(action);
+
+        Assert.Empty(_repository.Wines);
+        Assert.Equal(1, _imageStorage.SaveCallCount);
+
+        // The uploaded image must be deleted
+        Assert.Equal(1, _imageStorage.DeleteCallCount);
+
+        Assert.Equal(
+            "new-image.jpg",
+            _imageStorage.LastDeletedImageReference);
+    }
+
     [Fact]
     public async Task AddWineAsync_WhenTypeIsOtherWithoutCustomType_ThrowsException()
     {
@@ -223,7 +253,6 @@ public class WineServiceTests
         Assert.True(Assert.Single(_repository.Wines).IsFineWine);
     }
 
-    // Test that deleting a wine also deletes its image
     [Fact]
     public async Task DeleteWineAsync_WhenWineHasImage_DeletesWineAndImage()
     {
@@ -241,7 +270,6 @@ public class WineServiceTests
 
         // Assert
         Assert.Empty(_repository.Wines);
-
         Assert.Equal(1, _imageStorage.DeleteCallCount);
 
         Assert.Equal(
@@ -275,14 +303,12 @@ public class WineServiceTests
 
         // Assert
         Assert.Equal("new-image.jpg", wine.ImageReference);
-
         Assert.Equal(1, _imageStorage.DeleteCallCount);
 
         Assert.Equal(
             "old-image.jpg",
             _imageStorage.LastDeletedImageReference);
     }
-
 
     [Fact]
     public async Task UpdateWineAsync_WhenRepositoryFails_KeepsOldImage()
@@ -313,10 +339,7 @@ public class WineServiceTests
         // Assert
         await Assert.ThrowsAsync<InvalidOperationException>(action);
 
-        // The wine must keep its original image
         Assert.Equal("old-image.jpg", wine.ImageReference);
-
-        // Only the newly uploaded image should be deleted
         Assert.Equal(1, _imageStorage.DeleteCallCount);
 
         Assert.Equal(
@@ -324,16 +347,22 @@ public class WineServiceTests
             _imageStorage.LastDeletedImageReference);
     }
 
-
-
     // Fake repository used for testing
     private class FakeWineRepository : IWineRepository
     {
         public List<Wine> Wines { get; } = [];
+
+        public bool ShouldFailOnAdd { get; set; }
         public bool ShouldFailOnUpdate { get; set; }
 
         public Task AddWineAsync(Wine wine)
         {
+            if (ShouldFailOnAdd)
+            {
+                throw new IOException(
+                    "Simulated repository save failure.");
+            }
+
             Wines.Add(wine);
             return Task.CompletedTask;
         }
@@ -351,10 +380,8 @@ public class WineServiceTests
             return Task.FromResult(wine);
         }
 
-
         public Task UpdateWineAsync(Wine wine)
         {
-            // Simulate repository failure during testing
             if (ShouldFailOnUpdate)
             {
                 throw new InvalidOperationException(
@@ -375,7 +402,6 @@ public class WineServiceTests
             return Task.CompletedTask;
         }
 
-
         public Task DeleteWineAsync(Guid wineId)
         {
             Wines.RemoveAll(w => w.WineId == wineId);
@@ -387,16 +413,13 @@ public class WineServiceTests
     private class FakeImageStorageService : IImageStorageService
     {
         public int SaveCallCount { get; private set; }
-
         public int DeleteCallCount { get; private set; }
 
         public string ReferenceToReturn { get; set; } =
             "test-image.jpg";
 
         public string? LastFileName { get; private set; }
-
         public Stream? LastStream { get; private set; }
-
         public string? LastDeletedImageReference { get; private set; }
 
         public bool ShouldFail { get; set; }
@@ -419,7 +442,6 @@ public class WineServiceTests
         public Task DeleteImageAsync(string imageReference)
         {
             DeleteCallCount++;
-
             LastDeletedImageReference = imageReference;
 
             return Task.CompletedTask;
