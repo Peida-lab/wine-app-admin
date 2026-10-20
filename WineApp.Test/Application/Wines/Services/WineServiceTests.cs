@@ -205,6 +205,7 @@ public class WineServiceTests
         await AddValidWineAsync(isFineWine: true);
 
         Wine wine = Assert.Single(_repository.Wines);
+
         Assert.True(wine.IsFineWine);
     }
 
@@ -212,12 +213,40 @@ public class WineServiceTests
     public async Task UpdateWineAsync_WhenFineWineClassificationChanges_UpdatesWine()
     {
         await AddValidWineAsync();
+
         Wine wine = Assert.Single(_repository.Wines);
 
         wine.IsFineWine = true;
+
         await _service.UpdateWineAsync(wine);
 
         Assert.True(Assert.Single(_repository.Wines).IsFineWine);
+    }
+
+    // Test that deleting a wine also deletes its image
+    [Fact]
+    public async Task DeleteWineAsync_WhenWineHasImage_DeletesWineAndImage()
+    {
+        // Arrange
+        using MemoryStream imageStream = new([1, 2, 3, 4]);
+
+        await AddValidWineAsync(
+            imageStream: imageStream,
+            imageFileName: "wine.jpg");
+
+        Wine wine = Assert.Single(_repository.Wines);
+
+        // Act
+        await _service.DeleteWineAsync(wine.WineId);
+
+        // Assert
+        Assert.Empty(_repository.Wines);
+
+        Assert.Equal(1, _imageStorage.DeleteCallCount);
+
+        Assert.Equal(
+            "test-image.jpg",
+            _imageStorage.LastDeletedImageReference);
     }
 
     // Fake repository used for testing
@@ -269,12 +298,16 @@ public class WineServiceTests
     {
         public int SaveCallCount { get; private set; }
 
+        public int DeleteCallCount { get; private set; }
+
         public string ReferenceToReturn { get; set; } =
             "test-image.jpg";
 
         public string? LastFileName { get; private set; }
 
         public Stream? LastStream { get; private set; }
+
+        public string? LastDeletedImageReference { get; private set; }
 
         public bool ShouldFail { get; set; }
 
@@ -291,6 +324,15 @@ public class WineServiceTests
                 throw new IOException("Failed to save image.");
 
             return Task.FromResult(ReferenceToReturn);
+        }
+
+        public Task DeleteImageAsync(string imageReference)
+        {
+            DeleteCallCount++;
+
+            LastDeletedImageReference = imageReference;
+
+            return Task.CompletedTask;
         }
     }
 }

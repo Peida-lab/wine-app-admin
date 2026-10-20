@@ -187,4 +187,26 @@ public class LocalImageStorageServiceTests : IDisposable
         // Assert
         await Assert.ThrowsAsync<ArgumentNullException>(action);
     }
+
+    [Fact]
+    public async Task DeleteImageAsync_WhenImageExists_DeletesFile()
+    {
+        // Arrange
+        using MemoryStream stream = new(CreateJpegBytes());
+
+        string imageReference =
+            await _service.SaveImageAsync(stream, "wine.jpg");
+
+        string imagePath =
+            Path.Combine(_folderPath, imageReference);
+
+        Assert.True(File.Exists(imagePath));
+
+        // Act
+        await _service.DeleteImageAsync(imageReference);
+
+        // Assert
+        Assert.False(File.Exists(imagePath));
+    }
+
 }

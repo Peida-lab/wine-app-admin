@@ -79,9 +79,10 @@ public class WineService : IWineService
 
         if (imageStream is not null)
         {
-            imageReference = await _imageStorageService.SaveImageAsync(
-                imageStream,
-                imageFileName!);
+            imageReference =
+                await _imageStorageService.SaveImageAsync(
+                    imageStream,
+                    imageFileName!);
         }
 
         // Create wine
@@ -119,11 +120,40 @@ public class WineService : IWineService
     public async Task DeleteWineAsync(Guid wineId)
     {
         if (wineId == Guid.Empty)
+        {
             throw new ArgumentException(
                 "Wine id is required.",
                 nameof(wineId));
+        }
 
+        // Get the wine before deleting it
+        Wine? wine =
+            await _wineRepository.GetWineByIdAsync(wineId);
+
+        // Delete wine from repository first
         await _wineRepository.DeleteWineAsync(wineId);
+
+        // Delete associated image after successful deletion
+        if (!string.IsNullOrWhiteSpace(wine?.ImageReference))
+        {
+            try
+            {
+                await _imageStorageService.DeleteImageAsync(
+                    wine.ImageReference);
+            }
+            catch (IOException)
+            {
+                // Wine was deleted; image cleanup can be retried later
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Do not report the wine deletion as failed
+            }
+            catch (ArgumentException)
+            {
+                // Ignore invalid legacy image references
+            }
+        }
     }
 
     public async Task UpdateWineAsync(Wine wine)
