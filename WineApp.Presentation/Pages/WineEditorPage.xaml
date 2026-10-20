@@ -4,6 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:WineApp.Presentation.Controls">
 
+    <!-- Resources -->
+    <Page.Resources>
+        <controls:WineTypeDisplayConverter
+            x:Key="WineTypeDisplayConverter"/>
+    </Page.Resources>
+
     <ScrollViewer VerticalScrollBarVisibility="Auto">
 
         <StackPanel
@@ -83,15 +89,25 @@
                 FontSize="20"
                 FontWeight="SemiBold"/>
 
+            <!-- Vintyp med svenska namn -->
             <controls:NoWheelComboBox
                 Header="Vintyp"
                 HorizontalAlignment="Stretch"
                 ItemsSource="{x:Bind ViewModel.WineTypes}"
-                SelectedItem="{x:Bind ViewModel.SelectedWineType, Mode=TwoWay}"/>
+                SelectedItem="{x:Bind ViewModel.SelectedWineType, Mode=TwoWay}">
+
+                <controls:NoWheelComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding Converter={StaticResource WineTypeDisplayConverter}}"/>
+                    </DataTemplate>
+                </controls:NoWheelComboBox.ItemTemplate>
+
+            </controls:NoWheelComboBox>
 
             <TextBox
                 Header="Annan vintyp"
-                PlaceholderText="Fyll i om vintypen är Other"
+                PlaceholderText="Fyll i om vintypen är Övrigt"
                 Text="{x:Bind ViewModel.CustomWineType, Mode=TwoWay}"/>
 
             <TextBox
@@ -143,7 +159,7 @@
 
             <StackPanel Spacing="12">
 
-                <!-- Image preview -->
+                <!-- Förhandsvisning av bild -->
                 <Border
                     Width="170"
                     Height="200"
@@ -159,13 +175,13 @@
 
                 </Border>
 
-                <!-- Choose image -->
+                <!-- Välj bild -->
                 <Button
                     Content="Välj bild"
                     HorizontalAlignment="Left"
                     Click="ChooseImage_Click"/>
 
-                <!-- Filename / image status -->
+                <!-- Bildstatus -->
                 <TextBlock
                     Text="{x:Bind ViewModel.SelectedImageName, Mode=OneWay}"
                     Opacity="0.7"
@@ -183,6 +199,7 @@
                     Command="{x:Bind ViewModel.SaveWineCommand}"
                     MinWidth="140"/>
 
+                <!-- Statusmeddelande -->
                 <TextBlock
                     Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
                     TextWrapping="Wrap"/>
