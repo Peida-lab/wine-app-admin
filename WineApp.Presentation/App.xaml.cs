@@ -3,6 +3,8 @@ using Microsoft.UI.Xaml;
 using System;
 using WineApp.Application;
 using WineApp.Infrastructure;
+using WineApp.Presentation.Navigation;
+using WineApp.Presentation.Pages;
 
 
 namespace WineApp.Presentation;
@@ -18,13 +20,18 @@ public partial class App : Microsoft.UI.Xaml.Application
     {
         InitializeComponent();
 
-        ServiceCollection service = new();
+        ServiceCollection services = new();
 
-        service.AddApplication();
-        service.AddInfrastructure();
+        services.AddApplication();
+        services.AddInfrastructure();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddTransient<HomePage>();
+        services.AddTransient<WinesPage>();
+        services.AddTransient<WineEditorPage>();
+        
 
-        service.AddSingleton<MainWindow>();
-        _serviceProvider = service.BuildServiceProvider();
+        services.AddSingleton<MainWindow>();
+        _serviceProvider = services.BuildServiceProvider();
     }
 
 

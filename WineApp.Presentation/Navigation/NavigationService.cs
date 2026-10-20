@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using WineApp.Presentation.Pages;
 
 namespace WineApp.Presentation.Navigation;
 
@@ -21,7 +22,7 @@ public class NavigationService(IServiceProvider serviceProvider) : INavigationSe
                 "Navigeringen har inte initierats.");
         }
 
-        var targetPage = page switch
+        Page targetPage = page switch
         {
             AppPage.Home => serviceProvider.GetRequiredService<HomePage>(),
             AppPage.Wines => serviceProvider.GetRequiredService<WinesPage>(),

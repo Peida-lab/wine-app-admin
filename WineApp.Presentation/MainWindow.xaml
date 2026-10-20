@@ -1,19 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Window
     x:Class="WineApp.Presentation.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:WineApp.Presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="SMAK WINE APP">
+    Title="Smak Wines">
 
-    <Window.SystemBackdrop>
-        <MicaBackdrop />
-    </Window.SystemBackdrop>
+    <NavigationView
+        x:Name="MainNavigation"
+        PaneTitle=""
+        PaneDisplayMode="Left"
+        IsSettingsVisible="False"
+        IsBackButtonVisible="Collapsed">
 
-    <Grid>
+        <NavigationView.MenuItems>
 
-    </Grid>
+            <!-- Översikt -->
+            <NavigationViewItem
+                Content="Översikt"
+                Icon="Home"
+                Tag="Home"/>
+
+            <!-- Alla viner -->
+            <NavigationViewItem
+                Content="Alla viner"
+                Icon="Library"
+                Tag="Wines"/>
+
+            <!-- Lägg till vin -->
+            <NavigationViewItem
+                Content="Lägg till vin"
+                Icon="Add"
+                Tag="WineEditor"/>
+
+        </NavigationView.MenuItems>
+
+        <Frame x:Name="ContentFrame"/>
+
+    </NavigationView>
 </Window>
