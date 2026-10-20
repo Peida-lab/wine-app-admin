@@ -42,6 +42,7 @@ public partial class HomePageViewModel(IWineService wineService)
         {
             var wines = await wineService.GetAllWinesAsync();
 
+            // Update dashboard statistics
             TotalWines = wines.Count;
 
             RedWines = wines.Count(wine =>
@@ -53,6 +54,7 @@ public partial class HomePageViewModel(IWineService wineService)
             FineWines = wines.Count(wine =>
                 wine.IsFineWine);
 
+            // Refresh the five most recently registered wines
             RecentWines.Clear();
 
             foreach (var wine in wines.TakeLast(5).Reverse())
@@ -67,6 +69,24 @@ public partial class HomePageViewModel(IWineService wineService)
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    // Delete a wine and refresh the dashboard
+    public async Task DeleteWineAsync(Guid wineId)
+    {
+        ErrorMessage = null;
+
+        try
+        {
+            await wineService.DeleteWineAsync(wineId);
+
+            // Reload both statistics and recent wines
+            await LoadWinesAsync();
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "Det gick inte att ta bort vinet.";
         }
     }
 }

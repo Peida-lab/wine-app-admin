@@ -18,7 +18,8 @@
                 Spacing="12">
 
                 <Button
-                    Content="Tillbaka till alla viner"
+                    x:Name="BackButton"
+                    Content="Tillbaka"
                     Click="Back_Click"/>
 
                 <Button
@@ -97,6 +98,7 @@
 
                     </StackPanel>
 
+                    <!-- Wine properties -->
                     <Grid
                         ColumnSpacing="20"
                         RowSpacing="18">
@@ -197,7 +199,7 @@
 
                         </StackPanel>
 
-                        <!-- Alcohol percentage -->
+                        <!-- Alcohol -->
                         <StackPanel
                             Grid.Row="2"
                             Grid.Column="1"
@@ -253,6 +255,7 @@
 
             </Grid>
 
+            <!-- Description and pairing -->
             <Border
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -262,7 +265,6 @@
 
                 <StackPanel Spacing="22">
 
-                    <!-- Description -->
                     <StackPanel Spacing="10">
 
                         <TextBlock
@@ -276,7 +278,6 @@
 
                     </StackPanel>
 
-                    <!-- Food pairing -->
                     <StackPanel Spacing="10">
 
                         <TextBlock
@@ -290,7 +291,6 @@
 
                     </StackPanel>
 
-                    <!-- Wine ID -->
                     <StackPanel Spacing="6">
 
                         <TextBlock

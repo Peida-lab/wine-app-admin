@@ -11,6 +11,9 @@ public class NavigationService(IServiceProvider serviceProvider)
 {
     private Frame? _frame;
 
+    // Remember the currently displayed page
+    private AppPage? _currentPage;
+
     public void Initialize(Frame frame)
     {
         _frame = frame;
@@ -41,18 +44,26 @@ public class NavigationService(IServiceProvider serviceProvider)
             _ => throw new ArgumentOutOfRangeException(nameof(page))
         };
 
-        // Pass the wine ID to the editor
+        // Pass wine ID to the editor
         if (targetPage is WineEditorPage editorPage)
         {
             editorPage.WineId = wineId;
         }
 
-        // Pass the wine ID to the details page
+        // Pass wine ID and remember where the user came from
         if (targetPage is WineDetailsPage detailsPage)
         {
             detailsPage.WineId = wineId;
+
+            detailsPage.ReturnPage =
+                _currentPage == AppPage.Home
+                    ? AppPage.Home
+                    : AppPage.Wines;
         }
 
         _frame.Content = targetPage;
+
+        // Remember the current page for the next navigation
+        _currentPage = page;
     }
 }

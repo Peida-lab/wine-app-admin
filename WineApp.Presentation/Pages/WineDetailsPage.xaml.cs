@@ -15,6 +15,9 @@ public sealed partial class WineDetailsPage : Page
 
     public Guid? WineId { get; set; }
 
+    // The page to return to
+    public AppPage ReturnPage { get; set; } = AppPage.Wines;
+
     public WineDetailsPage(
         WineDetailsViewModel viewModel,
         INavigationService navigationService)
@@ -31,18 +34,23 @@ public sealed partial class WineDetailsPage : Page
         object sender,
         RoutedEventArgs e)
     {
+        // Update back button text based on previous page
+        BackButton.Content = ReturnPage == AppPage.Home
+            ? "Tillbaka till översikt"
+            : "Tillbaka till alla viner";
+
         await ViewModel.LoadWineAsync(WineId);
     }
 
-    // Return to the wine list
+    // Return to the page the user came from
     private void Back_Click(
         object sender,
         RoutedEventArgs e)
     {
-        _navigationService.Navigate(AppPage.Wines);
+        _navigationService.Navigate(ReturnPage);
     }
 
-    // Open the existing wine editor
+    // Open existing wine editor
     private void EditWine_Click(
         object sender,
         RoutedEventArgs e)
