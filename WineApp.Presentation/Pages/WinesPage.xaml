@@ -29,7 +29,7 @@
 
         </StackPanel>
 
-        <!-- Sökning och filter -->
+        <!-- Sökning och filtrering -->
         <Grid Grid.Row="1" ColumnSpacing="12">
 
             <Grid.ColumnDefinitions>
@@ -38,7 +38,6 @@
                 <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Sökfält -->
             <TextBox
                 Grid.Column="0"
                 Header="Sök vin"
@@ -46,7 +45,6 @@
                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 HorizontalAlignment="Stretch"/>
 
-            <!-- Filter: Vintyp -->
             <controls:NoWheelComboBox
                 Grid.Column="1"
                 Header="Vintyp"
@@ -54,7 +52,6 @@
                 ItemsSource="{x:Bind ViewModel.WineTypeFilters}"
                 SelectedIndex="{x:Bind ViewModel.SelectedWineTypeIndex, Mode=TwoWay}"/>
 
-            <!-- Filter: Fine Wine -->
             <controls:NoWheelComboBox
                 Grid.Column="2"
                 Header="Fine Wine"
@@ -105,6 +102,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
@@ -181,6 +179,14 @@
                                 IsChecked="{x:Bind IsFineWine, Mode=OneWay}"
                                 IsEnabled="False"
                                 VerticalAlignment="Center"/>
+
+                            <!-- Redigera vin -->
+                            <Button
+                                Grid.Column="5"
+                                Content="Redigera"
+                                VerticalAlignment="Center"
+                                CommandParameter="{x:Bind WineId}"
+                                Click="EditWine_Click"/>
 
                         </Grid>
 

@@ -1,3 +1,4 @@
+
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -19,16 +20,16 @@ public sealed partial class MainWindow : Window
 
         MainNavigation.SelectedItem = MainNavigation.MenuItems[0];
 
-        MainNavigation.SelectionChanged += MainNavigation_SelectionChanged;
+        MainNavigation.ItemInvoked += MainNavigation_ItemInvoked;
 
         _navigationService.Navigate(AppPage.Home);
     }
 
-    private void MainNavigation_SelectionChanged(
+    private void MainNavigation_ItemInvoked(
         NavigationView sender,
-        NavigationViewSelectionChangedEventArgs args)
+        NavigationViewItemInvokedEventArgs args)
     {
-        if (args.SelectedItem is not NavigationViewItem selectedItem)
+        if (args.InvokedItemContainer is not NavigationViewItem selectedItem)
             return;
 
         if (selectedItem.Tag is not string tag)

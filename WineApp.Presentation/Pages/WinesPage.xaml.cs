@@ -1,18 +1,25 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using WineApp.Domain.Wines.Enums;
+using WineApp.Presentation.Navigation;
 using WineApp.Presentation.ViewModels;
 
 namespace WineApp.Presentation.Pages;
 
 public sealed partial class WinesPage : Page
 {
+    private readonly INavigationService _navigationService;
+
     public WinesPageViewModel ViewModel { get; }
 
-    public WinesPage(WinesPageViewModel viewModel)
+    public WinesPage(
+        WinesPageViewModel viewModel,
+        INavigationService navigationService)
     {
         ViewModel = viewModel;
+        _navigationService = navigationService;
 
         InitializeComponent();
 
@@ -26,6 +33,19 @@ public sealed partial class WinesPage : Page
         await ViewModel.LoadWinesAsync();
     }
 
+    private void EditWine_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (sender is Button button &&
+            button.CommandParameter is Guid wineId)
+        {
+            _navigationService.Navigate(
+                AppPage.WineEditor,
+                wineId);
+        }
+    }
+
     public static string GetWineTypeDisplay(
         WineType wineType,
         string? customWineType)
@@ -37,9 +57,10 @@ public sealed partial class WinesPage : Page
             WineType.Rose => "Rosévin",
             WineType.Sparkling => "Mousserande",
             WineType.Dessert => "Dessertvin",
-            WineType.Other => string.IsNullOrWhiteSpace(customWineType)
-                ? "Övrigt"
-                : customWineType,
+            WineType.Other =>
+                string.IsNullOrWhiteSpace(customWineType)
+                    ? "Övrigt"
+                    : customWineType,
             _ => "Okänd vintyp"
         };
     }
