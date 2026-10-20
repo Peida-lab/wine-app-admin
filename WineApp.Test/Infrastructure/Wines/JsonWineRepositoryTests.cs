@@ -78,6 +78,69 @@ public class JsonWineRepositoryTests : IDisposable
         Assert.False(Assert.Single(allWines).IsFineWine);
     }
 
+    [Fact]
+    public async Task AddWineAsync_WithImageReference_PersistsImageReference()
+    {
+        // Arrange
+        Wine wine = CreateWine(false);
+        wine.ImageReference = "test-wine.jpg";
+
+        // Act
+        await _repository.AddWineAsync(wine);
+
+        Wine? savedWine =
+            await _repository.GetWineByIdAsync(wine.WineId);
+
+        // Assert
+        Assert.NotNull(savedWine);
+        Assert.Equal("test-wine.jpg", savedWine.ImageReference);
+    }
+
+    [Fact]
+    public async Task UpdateWineAsync_WhenImageChanges_PersistsNewReference()
+    {
+        // Arrange
+        Wine wine = CreateWine(false);
+        wine.ImageReference = "old-image.jpg";
+
+        await _repository.AddWineAsync(wine);
+
+        // Act
+        wine.ImageReference = "new-image.jpg";
+
+        await _repository.UpdateWineAsync(wine);
+
+        // Assert
+        Wine? updatedWine =
+            await _repository.GetWineByIdAsync(wine.WineId);
+
+        Assert.NotNull(updatedWine);
+        Assert.Equal("new-image.jpg", updatedWine.ImageReference);
+    }
+
+    [Fact]
+    public async Task DeleteWineAsync_WhenWineExists_RemovesWine()
+    {
+        // Arrange
+        Wine wine = CreateWine(false);
+
+        await _repository.AddWineAsync(wine);
+
+        // Act
+        await _repository.DeleteWineAsync(wine.WineId);
+
+        // Assert
+        Wine? deletedWine =
+            await _repository.GetWineByIdAsync(wine.WineId);
+
+        List<Wine> wines =
+            await _repository.GetAllWinesAsync();
+
+        Assert.Null(deletedWine);
+        Assert.Empty(wines);
+    }
+
+
     private static Wine CreateWine(bool isFineWine) => new()
     {
         WineId = Guid.NewGuid(),
