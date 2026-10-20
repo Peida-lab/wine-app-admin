@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using WineApp.Domain.Wines.Enums;
+using WineApp.Domain.Wines.Models;
 using WineApp.Presentation.Navigation;
 using WineApp.Presentation.ViewModels;
 
@@ -33,7 +34,20 @@ public sealed partial class WinesPage : Page
         await ViewModel.LoadWinesAsync();
     }
 
-    // Navigate to the wine editor with the selected wine ID
+    // Open the read-only details page
+    private void Wine_ItemClick(
+        object sender,
+        ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not Wine wine)
+            return;
+
+        _navigationService.Navigate(
+            AppPage.WineDetails,
+            wine.WineId);
+    }
+
+    // Navigate to the wine editor
     private void EditWine_Click(
         object sender,
         RoutedEventArgs e)
@@ -47,7 +61,7 @@ public sealed partial class WinesPage : Page
         }
     }
 
-    // Show confirmation dialog before deleting a wine
+    // Confirm before deleting a wine
     private async void DeleteWine_Click(
         object sender,
         RoutedEventArgs e)
@@ -62,7 +76,9 @@ public sealed partial class WinesPage : Page
         {
             XamlRoot = this.XamlRoot,
             Title = "Ta bort vin?",
-            Content = "Är du säker på att du vill ta bort det här vinet? Åtgärden kan inte ångras.",
+            Content =
+                "Är du säker på att du vill ta bort det här vinet? " +
+                "Åtgärden kan inte ångras.",
             PrimaryButtonText = "Ta bort",
             CloseButtonText = "Avbryt",
             DefaultButton = ContentDialogButton.Close
@@ -70,7 +86,6 @@ public sealed partial class WinesPage : Page
 
         ContentDialogResult result = await dialog.ShowAsync();
 
-        // Only delete when the user confirms
         if (result == ContentDialogResult.Primary)
         {
             await ViewModel.DeleteWineAsync(wineId);

@@ -31,11 +31,13 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<WinesPageViewModel>();
         services.AddTransient<WineEditorViewModel>();
+        services.AddTransient<WineDetailsViewModel>();
 
         // Pages
         services.AddTransient<HomePage>();
         services.AddTransient<WinesPage>();
         services.AddTransient<WineEditorPage>();
+        services.AddTransient<WineDetailsPage>();
 
         // MainWindow
         services.AddSingleton<MainWindow>();

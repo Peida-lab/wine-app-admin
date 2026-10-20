@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Pages\HomePage.xaml" />
+    <None Remove="Pages\WineDetailsPage.xaml" />
     <None Remove="Pages\WineEditorPage.xaml" />
     <None Remove="Pages\WinesPage.xaml" />
   </ItemGroup>
@@ -52,6 +53,11 @@
     <ProjectReference Include="..\WineApp.Application\WineApp.Application.csproj" />
     <ProjectReference Include="..\WineApp.Domain\WineApp.Domain.csproj" />
     <ProjectReference Include="..\WineApp.Infrastructure\WineApp.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\WineDetailsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\HomePage.xaml">

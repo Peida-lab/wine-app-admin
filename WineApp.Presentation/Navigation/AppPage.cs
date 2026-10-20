@@ -4,5 +4,7 @@ public enum AppPage
 {
     Home,
     Wines,
-    WineEditor
+    WineEditor,
+    WineDetails
+
 }

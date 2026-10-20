@@ -25,7 +25,7 @@
                 FontWeight="SemiBold"/>
 
             <TextBlock
-                Text="Här hittar du alla registrerade viner."
+                Text="Klicka på ett vin för att visa all information."
                 Opacity="0.7"/>
 
         </StackPanel>
@@ -70,7 +70,7 @@
 
         </Grid>
 
-        <!-- Loading and error messages -->
+        <!-- Loading and errors -->
         <StackPanel Grid.Row="2" Spacing="8">
 
             <ProgressRing
@@ -86,7 +86,7 @@
 
         </StackPanel>
 
-        <!-- Results and reset button -->
+        <!-- Result counter -->
         <Grid Grid.Row="3" ColumnSpacing="12">
 
             <Grid.ColumnDefinitions>
@@ -118,11 +118,13 @@
 
         </Grid>
 
-        <!-- Wine list -->
+        <!-- Clickable wine list -->
         <ListView
             Grid.Row="4"
             ItemsSource="{x:Bind ViewModel.Wines, Mode=OneWay}"
-            SelectionMode="None">
+            SelectionMode="None"
+            IsItemClickEnabled="True"
+            ItemClick="Wine_ItemClick">
 
             <ListView.ItemTemplate>
 

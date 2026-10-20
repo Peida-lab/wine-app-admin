@@ -35,13 +35,22 @@ public class NavigationService(IServiceProvider serviceProvider)
             AppPage.WineEditor =>
                 serviceProvider.GetRequiredService<WineEditorPage>(),
 
+            AppPage.WineDetails =>
+                serviceProvider.GetRequiredService<WineDetailsPage>(),
+
             _ => throw new ArgumentOutOfRangeException(nameof(page))
         };
 
-        // Pass the wine ID to the editor page
+        // Pass the wine ID to the editor
         if (targetPage is WineEditorPage editorPage)
         {
             editorPage.WineId = wineId;
+        }
+
+        // Pass the wine ID to the details page
+        if (targetPage is WineDetailsPage detailsPage)
+        {
+            detailsPage.WineId = wineId;
         }
 
         _frame.Content = targetPage;
