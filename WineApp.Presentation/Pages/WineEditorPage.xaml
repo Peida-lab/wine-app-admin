@@ -141,9 +141,18 @@
                 FontSize="20"
                 FontWeight="SemiBold"/>
 
-            <Button
-                Content="Välj bild"
-                IsEnabled="False"/>
+            <StackPanel Spacing="10">
+
+                <Button
+                    Content="Välj bild"
+                    HorizontalAlignment="Left"
+                    Click="ChooseImage_Click"/>
+
+                <TextBlock
+                    Text="{x:Bind ViewModel.SelectedImageName, Mode=OneWay}"
+                    Opacity="0.7"/>
+
+            </StackPanel>
 
             <!-- Spara -->
             <StackPanel Spacing="12">
