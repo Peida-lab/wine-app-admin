@@ -23,7 +23,8 @@ public class WineService : IWineService
         string wineGrape,
         int wineYear,
         decimal alcoholPercentage,
-        string? recommendedFood)
+        string? recommendedFood,
+        string? imageReference = null)
     {
         WineName validatedWineName = new(wineName);
         WineDescription validatedDescription = new(wineDescription);
@@ -54,7 +55,8 @@ public class WineService : IWineService
             WineGrape = validatedGrape,
             WineYear = validatedYear,
             AlcoholPercentage = validatedPercentage,
-            RecommendedFood = recommendedFood
+            RecommendedFood = recommendedFood,
+            ImageReference = imageReference
 
         };
 

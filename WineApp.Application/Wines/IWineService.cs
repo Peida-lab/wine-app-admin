@@ -5,7 +5,19 @@ namespace WineApp.Application.Wines
 {
     public interface IWineService
     {
-        Task AddWineAsync(string wineName, string wineDescription, string wineProducer, string wineCountry, string? wineRegion, WineType wineType, string? customWineType, string wineGrape, int wineYear, decimal alcoholPercentage, string? recommendedFood);
+        Task AddWineAsync(
+            string wineName, 
+            string wineDescription, 
+            string wineProducer, 
+            string wineCountry, 
+            string? wineRegion, 
+            WineType wineType, 
+            string? customWineType, 
+            string wineGrape, 
+            int wineYear, 
+            decimal alcoholPercentage, 
+            string? recommendedFood,
+            string? imageReference = null);
         Task DeleteWineAsync(Guid wineId);
         Task<List<Wine>> GetAllWinesAsync();
         Task<Wine?> GetWineByIdAsync(Guid wineId);

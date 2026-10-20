@@ -17,4 +17,5 @@ public class Wine
     public required WineYear WineYear { get; set; }
     public required WinePercentage AlcoholPercentage { get; set; }
     public string? RecommendedFood { get; set; }
+    public string? ImageReference { get; set; }
 }

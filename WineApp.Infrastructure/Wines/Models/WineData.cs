@@ -17,4 +17,5 @@ public class WineData
     public int WineYear { get; set; }
     public decimal AlcoholPercentage { get; set; }
     public string? RecommendedFood { get; set; }
+    public string? ImageReference { get; set; }
 }

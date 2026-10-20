@@ -32,7 +32,8 @@ public class JsonWineRepository : IWineRepository
             WineYear = wine.WineYear.Value,
             CustomWineType = wine.CustomWineType,
             AlcoholPercentage = wine.AlcoholPercentage.Value,
-            RecommendedFood = wine.RecommendedFood
+            RecommendedFood = wine.RecommendedFood,
+            ImageReference = wine.ImageReference
         };
         wines.Add(wineData);
 
@@ -90,7 +91,8 @@ public class JsonWineRepository : IWineRepository
                 WineGrape = new WineGrape(wineData.WineGrape),
                 WineYear = new WineYear(wineData.WineYear),
                 AlcoholPercentage = new WinePercentage(wineData.AlcoholPercentage),
-                RecommendedFood = wineData.RecommendedFood
+                RecommendedFood = wineData.RecommendedFood,
+                ImageReference = wineData.ImageReference
 
             };
 
@@ -125,7 +127,8 @@ public class JsonWineRepository : IWineRepository
             WineGrape = new WineGrape(wineData.WineGrape),
             WineYear = new WineYear(wineData.WineYear),
             AlcoholPercentage = new WinePercentage(wineData.AlcoholPercentage),
-            RecommendedFood = wineData.RecommendedFood
+            RecommendedFood = wineData.RecommendedFood,
+            ImageReference = wineData.ImageReference
         };
 
         return wine;
@@ -158,6 +161,7 @@ public class JsonWineRepository : IWineRepository
         existingWine.WineYear = wine.WineYear.Value;
         existingWine.AlcoholPercentage = wine.AlcoholPercentage.Value;
         existingWine.RecommendedFood = wine.RecommendedFood;
+        existingWine.ImageReference = wine.ImageReference;
 
         string updatedJson = JsonSerializer.Serialize(wines);
 
