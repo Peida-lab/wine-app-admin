@@ -80,11 +80,9 @@ public partial class WinesPageViewModel(IWineService wineService)
     [ObservableProperty]
     public partial string? ErrorMessage { get; set; }
 
-    // Shows how many wines match the filters
     [ObservableProperty]
     public partial string ResultSummary { get; set; } = string.Empty;
 
-    // Shows a message when the list is empty
     [ObservableProperty]
     public partial string EmptyStateMessage { get; set; } =
         string.Empty;
@@ -123,13 +121,30 @@ public partial class WinesPageViewModel(IWineService wineService)
         {
             await wineService.DeleteWineAsync(wineId);
 
-            // Refresh the list after deletion
             await LoadWinesAsync();
         }
         catch (Exception)
         {
             ErrorMessage = "Det gick inte att ta bort vinet.";
         }
+    }
+
+    // Apply filters when a dashboard card is clicked
+    public void ApplyDashboardFilter(
+        int wineTypeIndex,
+        int fineWineIndex)
+    {
+        // Clear an old search so the selected category
+        // always displays all matching wines.
+        SearchText = string.Empty;
+
+        SelectedWineTypeIndex = wineTypeIndex;
+        SelectedFineWineIndex = fineWineIndex;
+
+        // Start with alphabetical sorting
+        SelectedSortIndex = 0;
+
+        FilterWines();
     }
 
     // Reset search, filters and sorting
@@ -174,7 +189,7 @@ public partial class WinesPageViewModel(IWineService wineService)
                 ? WineTypeValues[SelectedWineTypeIndex]
                 : null;
 
-        // Apply search and filters
+        // Search and filter
         IEnumerable<Wine> filteredWines = _allWines.Where(wine =>
         {
             bool matchesSearch =
@@ -206,7 +221,7 @@ public partial class WinesPageViewModel(IWineService wineService)
                    matchesFineWine;
         });
 
-        // Apply sorting
+        // Sort the filtered wines
         IEnumerable<Wine> sortedWines = SelectedSortIndex switch
         {
             1 => filteredWines
@@ -234,7 +249,6 @@ public partial class WinesPageViewModel(IWineService wineService)
                     SwedishComparer)
         };
 
-        // Refresh the visible wines
         Wines.Clear();
 
         foreach (Wine wine in sortedWines)
@@ -242,11 +256,11 @@ public partial class WinesPageViewModel(IWineService wineService)
             Wines.Add(wine);
         }
 
-        // Update result counter
+        // Result counter
         ResultSummary =
             $"Visar {Wines.Count} av {_allWines.Count} viner";
 
-        // Show an appropriate message if no wines match
+        // Empty state
         if (Wines.Count > 0)
         {
             EmptyStateMessage = string.Empty;

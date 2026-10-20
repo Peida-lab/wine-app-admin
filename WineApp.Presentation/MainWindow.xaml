@@ -21,7 +21,7 @@
 
             <!-- Alla viner -->
             <NavigationViewItem
-                Content="Alla viner"
+                Content="Viner"
                 Icon="Library"
                 Tag="Wines"/>
 

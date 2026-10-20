@@ -20,7 +20,7 @@
         <StackPanel Grid.Row="0" Spacing="6">
 
             <TextBlock
-                Text="Alla viner"
+                Text="Viner"
                 FontSize="30"
                 FontWeight="SemiBold"/>
 

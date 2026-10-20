@@ -11,14 +11,17 @@ namespace WineApp.Presentation.Pages;
 public sealed partial class HomePage : Page
 {
     private readonly INavigationService _navigationService;
+    private readonly WinesPageViewModel _winesPageViewModel;
 
     public HomePageViewModel ViewModel { get; }
 
     public HomePage(
         HomePageViewModel viewModel,
+        WinesPageViewModel winesPageViewModel,
         INavigationService navigationService)
     {
         ViewModel = viewModel;
+        _winesPageViewModel = winesPageViewModel;
         _navigationService = navigationService;
 
         InitializeComponent();
@@ -31,6 +34,58 @@ public sealed partial class HomePage : Page
         RoutedEventArgs e)
     {
         await ViewModel.LoadWinesAsync();
+    }
+
+    // Open all wines
+    private void AllWines_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        OpenWineList(
+            wineTypeIndex: 0,
+            fineWineIndex: 0);
+    }
+
+    // Open red wines
+    private void RedWines_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        OpenWineList(
+            wineTypeIndex: 1,
+            fineWineIndex: 0);
+    }
+
+    // Open white wines
+    private void WhiteWines_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        OpenWineList(
+            wineTypeIndex: 2,
+            fineWineIndex: 0);
+    }
+
+    // Open Fine Wines
+    private void FineWines_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        OpenWineList(
+            wineTypeIndex: 0,
+            fineWineIndex: 1);
+    }
+
+    // Apply the appropriate filters before navigation
+    private void OpenWineList(
+        int wineTypeIndex,
+        int fineWineIndex)
+    {
+        _winesPageViewModel.ApplyDashboardFilter(
+            wineTypeIndex,
+            fineWineIndex);
+
+        _navigationService.Navigate(AppPage.Wines);
     }
 
     // Open wine details when a row is clicked

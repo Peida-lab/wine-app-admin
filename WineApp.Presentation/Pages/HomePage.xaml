@@ -12,6 +12,7 @@
 
             <!-- Page heading -->
             <StackPanel Spacing="6">
+
                 <TextBlock
                     Text="Översikt"
                     FontSize="30"
@@ -21,114 +22,154 @@
                     Text="Välkommen till Smak Wines"
                     FontSize="16"
                     Opacity="0.7"/>
+
             </StackPanel>
 
-            <!-- Statistics -->
-            <Grid
-                ColumnSpacing="16"
-                RowSpacing="16">
+            <!-- Compact dashboard statistics -->
+            <Grid ColumnSpacing="12">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- Total wines -->
-                <Border
-                    Grid.Row="0"
+                <!-- All wines -->
+                <Button
                     Grid.Column="0"
+                    Click="AllWines_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    MinHeight="112"
+                    Padding="16"
+                    CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20">
+                    BorderThickness="1">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="6">
+
                         <TextBlock
                             Text="Totalt antal viner"
-                            FontSize="16"/>
+                            FontSize="13"
+                            Opacity="0.7"/>
 
                         <TextBlock
                             Text="{x:Bind ViewModel.TotalWines, Mode=OneWay}"
-                            FontSize="36"
+                            FontSize="30"
                             FontWeight="SemiBold"/>
+
+                        <TextBlock
+                            Text="Visa alla →"
+                            FontSize="12"
+                            Opacity="0.7"/>
+
                     </StackPanel>
 
-                </Border>
+                </Button>
 
                 <!-- Red wines -->
-                <Border
-                    Grid.Row="0"
+                <Button
                     Grid.Column="1"
+                    Click="RedWines_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    MinHeight="112"
+                    Padding="16"
+                    CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20">
+                    BorderThickness="1">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="6">
+
                         <TextBlock
                             Text="Röda viner"
-                            FontSize="16"/>
+                            FontSize="13"
+                            Opacity="0.7"/>
 
                         <TextBlock
                             Text="{x:Bind ViewModel.RedWines, Mode=OneWay}"
-                            FontSize="36"
+                            FontSize="30"
                             FontWeight="SemiBold"/>
+
+                        <TextBlock
+                            Text="Visa röda viner →"
+                            FontSize="12"
+                            Opacity="0.7"/>
+
                     </StackPanel>
 
-                </Border>
+                </Button>
 
                 <!-- White wines -->
-                <Border
-                    Grid.Row="1"
-                    Grid.Column="0"
+                <Button
+                    Grid.Column="2"
+                    Click="WhiteWines_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    MinHeight="112"
+                    Padding="16"
+                    CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20">
+                    BorderThickness="1">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="6">
+
                         <TextBlock
                             Text="Vita viner"
-                            FontSize="16"/>
+                            FontSize="13"
+                            Opacity="0.7"/>
 
                         <TextBlock
                             Text="{x:Bind ViewModel.WhiteWines, Mode=OneWay}"
-                            FontSize="36"
+                            FontSize="30"
                             FontWeight="SemiBold"/>
+
+                        <TextBlock
+                            Text="Visa vita viner →"
+                            FontSize="12"
+                            Opacity="0.7"/>
+
                     </StackPanel>
 
-                </Border>
+                </Button>
 
-                <!-- Fine wines -->
-                <Border
-                    Grid.Row="1"
-                    Grid.Column="1"
+                <!-- Fine Wines -->
+                <Button
+                    Grid.Column="3"
+                    Click="FineWines_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    MinHeight="112"
+                    Padding="16"
+                    CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="12"
-                    Padding="20">
+                    BorderThickness="1">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="6">
+
                         <TextBlock
                             Text="Fine Wines"
-                            FontSize="16"/>
+                            FontSize="13"
+                            Opacity="0.7"/>
 
                         <TextBlock
                             Text="{x:Bind ViewModel.FineWines, Mode=OneWay}"
-                            FontSize="36"
+                            FontSize="30"
                             FontWeight="SemiBold"/>
+
+                        <TextBlock
+                            Text="Visa Fine Wines →"
+                            FontSize="12"
+                            Opacity="0.7"/>
+
                     </StackPanel>
 
-                </Border>
+                </Button>
 
             </Grid>
 
