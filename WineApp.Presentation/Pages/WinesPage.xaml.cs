@@ -33,6 +33,7 @@ public sealed partial class WinesPage : Page
         await ViewModel.LoadWinesAsync();
     }
 
+    // Navigate to the wine editor with the selected wine ID
     private void EditWine_Click(
         object sender,
         RoutedEventArgs e)
@@ -46,6 +47,37 @@ public sealed partial class WinesPage : Page
         }
     }
 
+    // Show confirmation dialog before deleting a wine
+    private async void DeleteWine_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (sender is not Button button ||
+            button.CommandParameter is not Guid wineId)
+        {
+            return;
+        }
+
+        ContentDialog dialog = new()
+        {
+            XamlRoot = this.XamlRoot,
+            Title = "Ta bort vin?",
+            Content = "Är du säker på att du vill ta bort det här vinet? Åtgärden kan inte ångras.",
+            PrimaryButtonText = "Ta bort",
+            CloseButtonText = "Avbryt",
+            DefaultButton = ContentDialogButton.Close
+        };
+
+        ContentDialogResult result = await dialog.ShowAsync();
+
+        // Only delete when the user confirms
+        if (result == ContentDialogResult.Primary)
+        {
+            await ViewModel.DeleteWineAsync(wineId);
+        }
+    }
+
+    // Convert wine types to Swedish display names
     public static string GetWineTypeDisplay(
         WineType wineType,
         string? customWineType)
@@ -57,10 +89,12 @@ public sealed partial class WinesPage : Page
             WineType.Rose => "Rosévin",
             WineType.Sparkling => "Mousserande",
             WineType.Dessert => "Dessertvin",
+
             WineType.Other =>
                 string.IsNullOrWhiteSpace(customWineType)
                     ? "Övrigt"
                     : customWineType,
+
             _ => "Okänd vintyp"
         };
     }

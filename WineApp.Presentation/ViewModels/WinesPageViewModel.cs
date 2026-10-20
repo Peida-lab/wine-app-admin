@@ -81,6 +81,22 @@ public partial class WinesPageViewModel(IWineService wineService)
             IsLoading = false;
         }
     }
+    public async Task DeleteWineAsync(Guid wineId)
+    {
+        ErrorMessage = null;
+
+        try
+        {
+            await wineService.DeleteWineAsync(wineId);
+
+            // Refresh the wine list after deletion
+            await LoadWinesAsync();
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "Det gick inte att ta bort vinet.";
+        }
+    }
 
     partial void OnSearchTextChanged(string value)
     {

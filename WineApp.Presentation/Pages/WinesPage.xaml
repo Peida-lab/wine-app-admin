@@ -38,6 +38,7 @@
                 <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- Sökfält -->
             <TextBox
                 Grid.Column="0"
                 Header="Sök vin"
@@ -45,6 +46,7 @@
                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 HorizontalAlignment="Stretch"/>
 
+            <!-- Filter: Vintyp -->
             <controls:NoWheelComboBox
                 Grid.Column="1"
                 Header="Vintyp"
@@ -52,6 +54,7 @@
                 ItemsSource="{x:Bind ViewModel.WineTypeFilters}"
                 SelectedIndex="{x:Bind ViewModel.SelectedWineTypeIndex, Mode=TwoWay}"/>
 
+            <!-- Filter: Fine Wine -->
             <controls:NoWheelComboBox
                 Grid.Column="2"
                 Header="Fine Wine"
@@ -102,6 +105,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
@@ -187,6 +191,15 @@
                                 VerticalAlignment="Center"
                                 CommandParameter="{x:Bind WineId}"
                                 Click="EditWine_Click"/>
+
+                            <!-- Ta bort vin -->
+                            <Button
+                                Grid.Column="6"
+                                Content="Ta bort"
+                                Foreground="IndianRed"
+                                VerticalAlignment="Center"
+                                CommandParameter="{x:Bind WineId}"
+                                Click="DeleteWine_Click"/>
 
                         </Grid>
 
