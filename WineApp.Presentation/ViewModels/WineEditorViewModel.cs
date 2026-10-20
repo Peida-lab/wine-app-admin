@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using WineApp.Application.Images;
 using WineApp.Application.Wines;
 using WineApp.Domain.Wines.Enums;
 using WineApp.Domain.Wines.Models;
@@ -15,12 +14,10 @@ using WineApp.Domain.Wines.ValueObjects;
 namespace WineApp.Presentation.ViewModels;
 
 public partial class WineEditorViewModel(
-    IWineService wineService,
-    IImageStorageService imageStorageService)
+    IWineService wineService)
     : ObservableObject
 {
     private readonly IWineService _wineService = wineService;
-    private readonly IImageStorageService _imageStorageService = imageStorageService;
 
     private Wine? _editingWine;
 
