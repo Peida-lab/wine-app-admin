@@ -33,7 +33,8 @@ public class WineService : IWineService
         decimal alcoholPercentage,
         string? recommendedFood,
         Stream? imageStream = null,
-        string? imageFileName = null)
+        string? imageFileName = null,
+        bool isFineWine = false)
     {
         // Validate wine information
         WineName validatedWineName = new(wineName);
@@ -94,6 +95,7 @@ public class WineService : IWineService
             WineRegion = wineRegion,
             WineType = wineType,
             CustomWineType = customWineType,
+            IsFineWine = isFineWine,
             WineGrape = validatedGrape,
             WineYear = validatedYear,
             AlcoholPercentage = validatedPercentage,

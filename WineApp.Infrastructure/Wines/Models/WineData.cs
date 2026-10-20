@@ -13,6 +13,7 @@ public class WineData
     public string? WineRegion { get; set; }
     public WineType WineType { get; set; }
     public string? CustomWineType { get; set; }
+    public bool IsFineWine { get; set; }
     public string  WineGrape { get; set; } = string.Empty;
     public int WineYear { get; set; }
     public decimal AlcoholPercentage { get; set; }

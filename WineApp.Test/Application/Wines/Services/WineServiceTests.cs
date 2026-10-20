@@ -24,7 +24,8 @@ public class WineServiceTests
         string? imageFileName = null,
         WineType wineType = WineType.Red,
         string? customWineType = null,
-        string wineName = "Test Wine")
+        string wineName = "Test Wine",
+        bool isFineWine = false)
     {
         return _service.AddWineAsync(
             wineName: wineName,
@@ -39,7 +40,8 @@ public class WineServiceTests
             alcoholPercentage: 13.5m,
             recommendedFood: "Pasta",
             imageStream: imageStream,
-            imageFileName: imageFileName);
+            imageFileName: imageFileName,
+            isFineWine: isFineWine);
     }
 
     [Fact]
@@ -54,6 +56,7 @@ public class WineServiceTests
         Assert.NotEqual(Guid.Empty, wine.WineId);
         Assert.Equal("Test Wine", wine.WineName.Value);
         Assert.Null(wine.ImageReference);
+        Assert.False(wine.IsFineWine);
         Assert.Equal(0, _imageStorage.SaveCallCount);
     }
 
@@ -194,6 +197,27 @@ public class WineServiceTests
 
         Assert.Equal(WineType.Red, wine.WineType);
         Assert.Null(wine.CustomWineType);
+    }
+
+    [Fact]
+    public async Task AddWineAsync_WhenFineWine_SavesFineWineClassification()
+    {
+        await AddValidWineAsync(isFineWine: true);
+
+        Wine wine = Assert.Single(_repository.Wines);
+        Assert.True(wine.IsFineWine);
+    }
+
+    [Fact]
+    public async Task UpdateWineAsync_WhenFineWineClassificationChanges_UpdatesWine()
+    {
+        await AddValidWineAsync();
+        Wine wine = Assert.Single(_repository.Wines);
+
+        wine.IsFineWine = true;
+        await _service.UpdateWineAsync(wine);
+
+        Assert.True(Assert.Single(_repository.Wines).IsFineWine);
     }
 
     // Fake repository used for testing

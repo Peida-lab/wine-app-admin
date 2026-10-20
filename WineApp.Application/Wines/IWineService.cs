@@ -19,7 +19,8 @@ public interface IWineService
         decimal alcoholPercentage,
         string? recommendedFood,
         Stream? imageStream = null,
-        string? imageFileName = null);
+        string? imageFileName = null,
+        bool isFineWine = false);
 
     Task DeleteWineAsync(Guid wineId);
 

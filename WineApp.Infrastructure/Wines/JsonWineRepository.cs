@@ -31,6 +31,7 @@ public class JsonWineRepository : IWineRepository
             WineType = wine.WineType,
             WineYear = wine.WineYear.Value,
             CustomWineType = wine.CustomWineType,
+            IsFineWine = wine.IsFineWine,
             AlcoholPercentage = wine.AlcoholPercentage.Value,
             RecommendedFood = wine.RecommendedFood,
             ImageReference = wine.ImageReference
@@ -88,6 +89,7 @@ public class JsonWineRepository : IWineRepository
                 WineRegion = wineData.WineRegion,
                 WineType = wineData.WineType,
                 CustomWineType = wineData.CustomWineType,
+                IsFineWine = wineData.IsFineWine,
                 WineGrape = new WineGrape(wineData.WineGrape),
                 WineYear = new WineYear(wineData.WineYear),
                 AlcoholPercentage = new WinePercentage(wineData.AlcoholPercentage),
@@ -124,6 +126,7 @@ public class JsonWineRepository : IWineRepository
             WineRegion = wineData.WineRegion,
             WineType = wineData.WineType,
             CustomWineType = wineData.CustomWineType,
+            IsFineWine = wineData.IsFineWine,
             WineGrape = new WineGrape(wineData.WineGrape),
             WineYear = new WineYear(wineData.WineYear),
             AlcoholPercentage = new WinePercentage(wineData.AlcoholPercentage),
@@ -157,6 +160,7 @@ public class JsonWineRepository : IWineRepository
         existingWine.WineRegion = wine.WineRegion;
         existingWine.WineType = wine.WineType;
         existingWine.CustomWineType = wine.CustomWineType;
+        existingWine.IsFineWine = wine.IsFineWine;
         existingWine.WineGrape = wine.WineGrape.Value;
         existingWine.WineYear = wine.WineYear.Value;
         existingWine.AlcoholPercentage = wine.AlcoholPercentage.Value;
