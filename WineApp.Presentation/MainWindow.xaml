@@ -13,19 +13,16 @@
 
         <NavigationView.MenuItems>
 
-            <!-- Översikt -->
             <NavigationViewItem
                 Content="Översikt"
                 Icon="Home"
                 Tag="Home"/>
 
-            <!-- Alla viner -->
             <NavigationViewItem
                 Content="Viner"
                 Icon="Library"
                 Tag="Wines"/>
 
-            <!-- Lägg till vin -->
             <NavigationViewItem
                 Content="Lägg till vin"
                 Icon="Add"
@@ -33,7 +30,34 @@
 
         </NavigationView.MenuItems>
 
-        <Frame x:Name="ContentFrame"/>
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="86"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Smak logo -->
+            <Grid
+                Grid.Row="0"
+                Margin="30,8,30,0">
+
+                <Image
+                    Source="ms-appx:///Assets/SmakLogoHighRes.png"
+                    Width="170"
+                    Height="75"
+                    Stretch="Uniform"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"/>
+
+            </Grid>
+
+            <!-- Application pages -->
+            <Frame
+                x:Name="ContentFrame"
+                Grid.Row="1"/>
+
+        </Grid>
 
     </NavigationView>
 </Window>
