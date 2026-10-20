@@ -54,9 +54,6 @@
     <ProjectReference Include="..\WineApp.Infrastructure\WineApp.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Pages\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

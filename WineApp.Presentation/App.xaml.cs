@@ -5,6 +5,7 @@ using WineApp.Application;
 using WineApp.Infrastructure;
 using WineApp.Presentation.Navigation;
 using WineApp.Presentation.Pages;
+using WineApp.Presentation.ViewModels;
 
 
 namespace WineApp.Presentation;
@@ -24,10 +25,16 @@ public partial class App : Microsoft.UI.Xaml.Application
 
         services.AddApplication();
         services.AddInfrastructure();
+
         services.AddSingleton<INavigationService, NavigationService>();
+
+        services.AddTransient<HomePageViewModel>();
+
         services.AddTransient<HomePage>();
         services.AddTransient<WinesPage>();
         services.AddTransient<WineEditorPage>();
+
+        
         
 
         services.AddSingleton<MainWindow>();
