@@ -28,5 +28,8 @@ public interface IWineService
 
     Task<Wine?> GetWineByIdAsync(Guid wineId);
 
-    Task UpdateWineAsync(Wine wine);
+    Task UpdateWineAsync(
+    Wine wine,
+    Stream? imageStream = null,
+    string? imageFileName = null);
 }

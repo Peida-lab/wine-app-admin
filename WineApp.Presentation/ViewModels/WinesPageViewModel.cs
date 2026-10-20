@@ -32,8 +32,8 @@ public partial class WinesPageViewModel(IWineService wineService)
     public IReadOnlyList<string> FineWineFilters { get; } =
     [
         "Alla viner",
-        "Endast Fine Wines",
-        "Ej Fine Wine"
+        "Fine Wines",
+        "Hus viner"
     ];
 
     private static readonly WineType?[] WineTypeValues =

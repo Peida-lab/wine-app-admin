@@ -156,7 +156,11 @@ public class WineService : IWineService
         }
     }
 
-    public async Task UpdateWineAsync(Wine wine)
+
+    public async Task UpdateWineAsync(
+        Wine wine,
+        Stream? imageStream = null,
+        string? imageFileName = null)
     {
         ArgumentNullException.ThrowIfNull(wine);
 
@@ -175,6 +179,87 @@ public class WineService : IWineService
         else
             wine.CustomWineType = wine.CustomWineType!.Trim();
 
-        await _wineRepository.UpdateWineAsync(wine);
+        // Validate optional image
+        if (imageStream is not null &&
+            string.IsNullOrWhiteSpace(imageFileName))
+        {
+            throw new ArgumentException(
+                "Image filename is required.");
+        }
+
+        if (imageStream is null && imageFileName is not null)
+        {
+            throw new ArgumentException(
+                "Image stream is required.");
+        }
+
+        // Get the previously saved image reference
+        Wine? existingWine =
+            await _wineRepository.GetWineByIdAsync(wine.WineId);
+
+        if (existingWine is null)
+            throw new InvalidOperationException("Wine not found.");
+
+        string? oldImageReference = existingWine.ImageReference;
+
+        // No new image: update wine information only
+        if (imageStream is null)
+        {
+            await _wineRepository.UpdateWineAsync(wine);
+            return;
+        }
+
+        // Save the replacement image
+        string newImageReference =
+            await _imageStorageService.SaveImageAsync(
+                imageStream,
+                imageFileName!);
+
+        wine.ImageReference = newImageReference;
+
+        try
+        {
+            // Update JSON before deleting the old image
+            await _wineRepository.UpdateWineAsync(wine);
+        }
+        catch
+        {
+            // Restore the previous reference
+            wine.ImageReference = oldImageReference;
+
+            // Remove newly uploaded image if updating fails
+            await TryDeleteImageAsync(newImageReference);
+
+            throw;
+        }
+
+        // Delete old image only after successful update
+        if (!string.IsNullOrWhiteSpace(oldImageReference) &&
+            oldImageReference != newImageReference)
+        {
+            await TryDeleteImageAsync(oldImageReference);
+        }
     }
+
+    // Best-effort cleanup of stored image files
+    private async Task TryDeleteImageAsync(string imageReference)
+    {
+        try
+        {
+            await _imageStorageService.DeleteImageAsync(imageReference);
+        }
+        catch (IOException)
+        {
+            // Image cleanup can be retried later
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Keep the successfully saved wine update
+        }
+        catch (ArgumentException)
+        {
+            // Ignore invalid legacy image references
+        }
+    }
+
 }

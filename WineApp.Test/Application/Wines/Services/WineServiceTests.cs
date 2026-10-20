@@ -249,10 +249,88 @@ public class WineServiceTests
             _imageStorage.LastDeletedImageReference);
     }
 
+    [Fact]
+    public async Task UpdateWineAsync_WhenImageIsReplaced_DeletesOldImage()
+    {
+        // Arrange
+        using MemoryStream oldImageStream = new([1, 2, 3]);
+
+        _imageStorage.ReferenceToReturn = "old-image.jpg";
+
+        await AddValidWineAsync(
+            imageStream: oldImageStream,
+            imageFileName: "old.jpg");
+
+        Wine wine = Assert.Single(_repository.Wines);
+
+        using MemoryStream newImageStream = new([4, 5, 6]);
+
+        _imageStorage.ReferenceToReturn = "new-image.jpg";
+
+        // Act
+        await _service.UpdateWineAsync(
+            wine,
+            imageStream: newImageStream,
+            imageFileName: "new.jpg");
+
+        // Assert
+        Assert.Equal("new-image.jpg", wine.ImageReference);
+
+        Assert.Equal(1, _imageStorage.DeleteCallCount);
+
+        Assert.Equal(
+            "old-image.jpg",
+            _imageStorage.LastDeletedImageReference);
+    }
+
+
+    [Fact]
+    public async Task UpdateWineAsync_WhenRepositoryFails_KeepsOldImage()
+    {
+        // Arrange
+        using MemoryStream oldImageStream = new([1, 2, 3]);
+
+        _imageStorage.ReferenceToReturn = "old-image.jpg";
+
+        await AddValidWineAsync(
+            imageStream: oldImageStream,
+            imageFileName: "old.jpg");
+
+        Wine wine = Assert.Single(_repository.Wines);
+
+        _imageStorage.ReferenceToReturn = "new-image.jpg";
+        _repository.ShouldFailOnUpdate = true;
+
+        using MemoryStream newImageStream = new([4, 5, 6]);
+
+        // Act
+        Func<Task> action = () =>
+            _service.UpdateWineAsync(
+                wine,
+                imageStream: newImageStream,
+                imageFileName: "new.jpg");
+
+        // Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(action);
+
+        // The wine must keep its original image
+        Assert.Equal("old-image.jpg", wine.ImageReference);
+
+        // Only the newly uploaded image should be deleted
+        Assert.Equal(1, _imageStorage.DeleteCallCount);
+
+        Assert.Equal(
+            "new-image.jpg",
+            _imageStorage.LastDeletedImageReference);
+    }
+
+
+
     // Fake repository used for testing
     private class FakeWineRepository : IWineRepository
     {
         public List<Wine> Wines { get; } = [];
+        public bool ShouldFailOnUpdate { get; set; }
 
         public Task AddWineAsync(Wine wine)
         {
@@ -273,18 +351,30 @@ public class WineServiceTests
             return Task.FromResult(wine);
         }
 
+
         public Task UpdateWineAsync(Wine wine)
         {
+            // Simulate repository failure during testing
+            if (ShouldFailOnUpdate)
+            {
+                throw new InvalidOperationException(
+                    "Simulated update failure.");
+            }
+
             int index = Wines.FindIndex(
                 w => w.WineId == wine.WineId);
 
             if (index < 0)
-                throw new InvalidOperationException("Wine not found.");
+            {
+                throw new InvalidOperationException(
+                    "Wine not found.");
+            }
 
             Wines[index] = wine;
 
             return Task.CompletedTask;
         }
+
 
         public Task DeleteWineAsync(Guid wineId)
         {

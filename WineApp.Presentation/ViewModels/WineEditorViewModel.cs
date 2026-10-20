@@ -235,19 +235,19 @@ public partial class WineEditorViewModel(
                 wine.RecommendedFood = RecommendedFood;
                 wine.IsFineWine = IsFineWine;
 
-                // Save replacement image, if selected
-                if (SelectedImagePath is not null)
-                {
-                    using FileStream imageStream =
-                        File.OpenRead(SelectedImagePath);
+                // Open the selected image, if any
+                using FileStream? imageStream =
+                    SelectedImagePath is null
+                        ? null
+                        : File.OpenRead(SelectedImagePath);
 
-                    wine.ImageReference =
-                        await _imageStorageService.SaveImageAsync(
-                            imageStream,
-                            Path.GetFileName(SelectedImagePath));
-                }
-
-                await _wineService.UpdateWineAsync(wine);
+                // Let WineService handle image replacement and cleanup
+                await _wineService.UpdateWineAsync(
+                    wine,
+                    imageStream: imageStream,
+                    imageFileName: SelectedImagePath is null
+                        ? null
+                        : Path.GetFileName(SelectedImagePath));
 
                 // Switch preview to the saved image
                 CurrentImageReference = wine.ImageReference;
